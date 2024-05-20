@@ -62,7 +62,7 @@ export default configuration;
 
 Add the following script to your `package.json`:
 
-```json
+```js
 {
   // ...
   "scripts": {
