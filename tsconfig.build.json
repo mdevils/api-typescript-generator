@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [],
+  "files": [
+    "src/index.ts",
+    "src/openapi.ts",
+    "src/openapi-client.ts",
+    "src/cli/index.ts",
+  ]
+}
