@@ -118,6 +118,8 @@ testApiClient().catch(console.error);
 
 ## Documentation
 
+The most important interface for now would be the [OpenApiClientGeneratorConfig](docs/interfaces/openapi_client.OpenApiClientGeneratorConfig.md) interface. It contains all the configuration options for the Open API Client Generator.
+
 Types are exported as part of three modules, depending on the area of application:
 
 1. [`api-typescript-generator`](docs/modules/index.md) - The main module that exports the common API Generator Configuration types.
