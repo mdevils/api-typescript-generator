@@ -4,16 +4,25 @@ import {
     ImportDeclaration,
     importDefaultSpecifier,
     importSpecifier,
+    isImportSpecifier,
     stringLiteral,
     tsNullKeyword
 } from '@babel/types';
 import R from 'ramda';
 import {getRelativeImportPath} from './paths';
 import {generateSchemaType, GenerateSchemaTypeParams, isNamedSchema} from '../schema-to-typescript/common';
+import {OpenApiClientExternalValueSourceImportEntity} from '../schema-to-typescript/openapi-to-typescript-client';
 import {OpenApiSchema} from '../schemas/common';
 
+interface DependencyImportsEntity {
+    kind: 'value' | 'type';
+    entity: OpenApiClientExternalValueSourceImportEntity;
+}
+
 export interface DependencyImports {
-    [importPath: string]: {[dependencyName: string]: string};
+    [importPath: string]: {
+        [aliasName: string]: DependencyImportsEntity;
+    };
 }
 
 export function collectSchemaDependencies(schema: OpenApiSchema): Record<string, OpenApiSchema> {
@@ -48,7 +57,11 @@ export function generateSchemaTypeAndImports(
             addDependencyImport(
                 dependencyImports,
                 getRelativeImportPath(params.sourceImportPath, importPath),
-                modelName
+                modelName,
+                {
+                    kind: 'type',
+                    entity: {name: modelName}
+                }
             );
             return modelName;
         }
@@ -65,37 +78,44 @@ export function extendDependenciesAndGetResult<T>(
 }
 
 export function generateTsImports(dependencyImports: DependencyImports): ImportDeclaration[] {
-    return Object.entries(dependencyImports)
-        .sort(([a], [b]) => a.localeCompare(b))
-        .map(([depPath, importsIndex]) =>
-            importDeclaration(
-                Object.entries(importsIndex).map(([name, alias]) => {
-                    if (name === 'default') {
-                        return importDefaultSpecifier(identifier(alias));
-                    } else {
-                        return importSpecifier(identifier(name), identifier(alias));
-                    }
-                }),
-                stringLiteral(depPath)
-            )
-        );
+    const entries = Object.entries(dependencyImports).sort(([a], [b]) => a.localeCompare(b));
+    const result: ImportDeclaration[] = [];
+    for (const [path, imports] of entries) {
+        const allTypes = Object.values(imports).every(({kind}) => kind === 'type');
+        const importSpecifiers = Object.entries(imports).map(([alias, {kind, entity}]) => {
+            const specifier =
+                entity === 'default'
+                    ? importDefaultSpecifier(identifier(alias))
+                    : importSpecifier(identifier(entity.name), identifier(entity.name));
+            if (isImportSpecifier(specifier) && !allTypes && kind === 'type') {
+                specifier.importKind = 'type';
+            }
+            return specifier;
+        });
+        const declaration = importDeclaration(importSpecifiers, stringLiteral(path));
+        if (allTypes) {
+            declaration.importKind = 'type';
+        }
+        result.push(declaration);
+    }
+    return result;
 }
 
 export function addDependencyImport(
     dependencyImports: DependencyImports,
     importPath: string,
-    entityName: string,
-    alias?: string
+    aliasName: string,
+    entity: DependencyImportsEntity
 ) {
     dependencyImports[importPath] || (dependencyImports[importPath] = {});
-    dependencyImports[importPath][entityName] = alias ?? entityName;
+    dependencyImports[importPath][aliasName] = entity;
 }
 
 export function extendDependencyImports(dependencyImports: DependencyImports, extension: DependencyImports) {
     for (const [importPath, entities] of Object.entries(extension)) {
         dependencyImports[importPath] || (dependencyImports[importPath] = {});
-        for (const [entityName, alias] of Object.entries(entities)) {
-            dependencyImports[importPath][entityName] = alias;
+        for (const [aliasName, entity] of Object.entries(entities)) {
+            dependencyImports[importPath][aliasName] = entity;
         }
     }
 }

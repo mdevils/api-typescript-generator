@@ -26,5 +26,6 @@ export type {
     OpenApiClientGeneratorConfigComments,
     OpenApiClientGeneratorConfigJsDoc,
     OpenApiClientGeneratorConfigJsDocWordWrap,
-    OpenApiClientGeneratorConfigValidationSchemaStorage
+    OpenApiClientGeneratorConfigValidationSchemaStorage,
+    OpenApiClientExternalValueSourceImportEntity
 } from './schema-to-typescript/openapi-to-typescript-client';

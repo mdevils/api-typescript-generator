@@ -75,7 +75,10 @@ async function loadExportsFromFile(filename: string) {
                     ) {
                         throw new Error('Import specifiers should not alter imported names.');
                     }
-                    addDependencyImport(dependencyImports, statement.source.value, specifier.local.name);
+                    addDependencyImport(dependencyImports, statement.source.value, specifier.local.name, {
+                        kind: specifier.importKind === 'type' ? 'type' : 'value',
+                        entity: {name: specifier.imported.name}
+                    });
                 }
             }
         }
@@ -98,13 +101,20 @@ async function loadExportsFromFile(filename: string) {
 
 export class ZodValidationProvider extends ValidationProvider {
     getSchemaType() {
-        return {
-            result: tsTypeReference(identifier('ZodTypeAny')),
-            dependencyImports: {zod: {ZodTypeAny: 'ZodTypeAny'}}
-        };
+        const dependencyImports: DependencyImports = {};
+        addDependencyImport(dependencyImports, 'zod', 'ZodTypeAny', {
+            kind: 'type',
+            entity: {name: 'ZodTypeAny'}
+        });
+        return {result: tsTypeReference(identifier('ZodTypeAny')), dependencyImports};
     }
     withDependencyImports<T>(result: T): {result: T; dependencyImports: DependencyImports} {
-        return {result, dependencyImports: {zod: {z: 'z'}}};
+        const dependencyImports: DependencyImports = {};
+        addDependencyImport(dependencyImports, 'zod', 'z', {
+            kind: 'value',
+            entity: {name: 'z'}
+        });
+        return {result, dependencyImports};
     }
     generateSchema(schema: OpenApiSchema, context: ValidationProviderContext): ResultWithDependencyImports<Expression> {
         return this.withDependencyImports(this.generateSchemaItem(schema, context));

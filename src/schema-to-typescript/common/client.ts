@@ -142,7 +142,8 @@ export function generateClient({
     addDependencyImport(
         dependencyImports,
         getRelativeImportPath(clientImportPath, commonHttpServiceImportPath),
-        commonHttpServiceClassName
+        commonHttpServiceClassName,
+        {kind: 'value', entity: {name: commonHttpServiceClassName}}
     );
 
     if (includeServices !== 'none') {
@@ -154,7 +155,10 @@ export function generateClient({
         for (const {name, importPath, tag, jsdoc} of servicesToInclude
             .concat()
             .sort((a, b) => a.name.localeCompare(b.name))) {
-            addDependencyImport(dependencyImports, getRelativeImportPath(clientImportPath, importPath), name);
+            addDependencyImport(dependencyImports, getRelativeImportPath(clientImportPath, importPath), name, {
+                kind: 'value',
+                entity: {name}
+            });
             clientClassBody.body.push(
                 attachJsDocComment(
                     classProperty(
@@ -279,7 +283,10 @@ export function generateClient({
 
     if (exportModels) {
         for (const {modelName, importPath} of modelImportInfos) {
-            addDependencyImport(dependencyImports, getRelativeImportPath(clientImportPath, importPath), modelName);
+            addDependencyImport(dependencyImports, getRelativeImportPath(clientImportPath, importPath), modelName, {
+                kind: 'type',
+                entity: {name: modelName}
+            });
             exportTypes.specifiers.push(exportSpecifier(identifier(modelName), identifier(modelName)));
         }
     }
@@ -288,7 +295,10 @@ export function generateClient({
 
     if (exportServices) {
         for (const {name, importPath} of generatedServiceImports) {
-            addDependencyImport(dependencyImports, getRelativeImportPath(clientImportPath, importPath), name);
+            addDependencyImport(dependencyImports, getRelativeImportPath(clientImportPath, importPath), name, {
+                kind: 'value',
+                entity: {name}
+            });
             exports.specifiers.push(exportSpecifier(identifier(name), identifier(name)));
         }
     }
@@ -298,7 +308,8 @@ export function generateClient({
         addDependencyImport(
             dependencyImports,
             getRelativeImportPath(clientImportPath, validationContext.validationSchemaStorageImportPath),
-            validationContext.validationSchemaStorageImportName
+            validationContext.validationSchemaStorageImportName,
+            {kind: 'value', entity: {name: validationContext.validationSchemaStorageImportName}}
         );
         otherStatements.push(
             expressionStatement(

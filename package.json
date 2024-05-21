@@ -9,6 +9,9 @@
     "url": "https://github.com/mdevils/api-typescript-generator.git"
   },
   "files": [
+    "index.d.ts",
+    "openapi.d.ts",
+    "openapi-client.d.ts",
     "lib",
     "src",
     "docs",

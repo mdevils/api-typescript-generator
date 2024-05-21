@@ -46,7 +46,11 @@ export async function generateValidationSchemaStorage({
     addDependencyImport(
         dependencyImports,
         getRelativeImportPath(importPath, commonValidationSchemaStorage.importPath),
-        commonValidationSchemaStorage.className
+        commonValidationSchemaStorage.className,
+        {
+            kind: 'value',
+            entity: {name: commonValidationSchemaStorage.className}
+        }
     );
 
     const generatedAssertCall = validationProvider.generateAssertCall(identifier('schema'), identifier('data'));

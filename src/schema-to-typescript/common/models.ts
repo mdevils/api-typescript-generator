@@ -293,7 +293,10 @@ export function generateModels({
                     filename,
                     path.join(relativeDirPath, formatFilename(depInfo.scope, filenameFormat))
                 );
-                addDependencyImport(dependencyImports, depPath, depInfo.modelName);
+                addDependencyImport(dependencyImports, depPath, depInfo.modelName, {
+                    kind: 'type',
+                    entity: {name: depInfo.modelName}
+                });
             }
             exports.push(
                 extendDependenciesAndGetResult(
@@ -357,7 +360,11 @@ export function generateModels({
             addDependencyImport(
                 dependencyImports,
                 getRelativeImportPath(importPath, commonValidationSchemaStorage.importPath),
-                commonValidationSchemaStorage.className
+                commonValidationSchemaStorage.className,
+                {
+                    kind: 'type',
+                    entity: {name: commonValidationSchemaStorage.className}
+                }
             );
             otherStatements.push(
                 exportNamedDeclaration(

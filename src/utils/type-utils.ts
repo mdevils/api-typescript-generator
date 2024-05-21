@@ -120,6 +120,9 @@ export function simplifyUnionTypeIfPossible(union: TSUnionType): TSType {
                     if (Object.keys(comparedProperties).length !== compared.members.length) {
                         continue;
                     }
+                    if (!R.equals(Object.keys(currentProperties).sort(), Object.keys(comparedProperties).sort())) {
+                        continue;
+                    }
                     const keysWithDifferences = Object.keys(currentProperties).filter(
                         (key) =>
                             !R.equals(

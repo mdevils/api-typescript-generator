@@ -512,6 +512,11 @@ export type GenerateClientJsDoc = (params: {
 }) => JsDocBlock;
 
 /**
+ * What needs to be imported from the external source.
+ */
+export type OpenApiClientExternalValueSourceImportEntity = {name: string} | 'default';
+
+/**
  * Custom value source for the OpenAPI client generation customization.
  */
 export interface OpenApiClientExternalValueSource {
@@ -522,7 +527,7 @@ export interface OpenApiClientExternalValueSource {
     /**
      * Import name of the source.
      */
-    import: {name: string} | 'default';
+    import: OpenApiClientExternalValueSourceImportEntity;
 }
 
 /**

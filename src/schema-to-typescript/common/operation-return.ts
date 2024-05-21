@@ -176,7 +176,11 @@ export function getOperationReturnType({
                                         addDependencyImport(
                                             dependencyImports,
                                             getRelativeImportPath(operationImportPath, modelData.importPath),
-                                            modelData.registerValidationSchemasImportName
+                                            modelData.registerValidationSchemasImportName,
+                                            {
+                                                kind: 'value',
+                                                entity: {name: modelData.registerValidationSchemasImportName}
+                                            }
                                         );
                                         modelRegisterValidationSchemaImports[
                                             modelData.registerValidationSchemasImportName
@@ -219,7 +223,8 @@ export function getOperationReturnType({
         addDependencyImport(
             dependencyImports,
             getRelativeImportPath(operationImportPath, validationSchemaStorageImportPath),
-            validationSchemaStorageImportName
+            validationSchemaStorageImportName,
+            {kind: 'value', entity: {name: validationSchemaStorageImportName}}
         );
         validationStatements.push(
             expressionStatement(

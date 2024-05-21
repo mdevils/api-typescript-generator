@@ -50,13 +50,17 @@ export function generateBinaryType(
                 }
             }
             if (source) {
+                const importedEntityName = Array.isArray(name) ? name[0] : name;
                 addDependencyImport(
                     dependencyImports,
                     isRelativeImportPath(source.importPath)
                         ? getRelativeImportPath(basePath, source.importPath)
                         : source.importPath,
-                    typeof source.import === 'string' ? source.import : source.import.name,
-                    Array.isArray(name) ? name[0] : name
+                    importedEntityName,
+                    {
+                        kind: 'type',
+                        entity: source.import
+                    }
                 );
             }
             result.types.push(tsTypeReference(qualifiedTypeName(name), typeTemplateParameters));
