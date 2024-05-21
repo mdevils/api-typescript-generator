@@ -132,5 +132,3 @@ At the moment only types are exported to be used with CLI. Callable API is plann
 
 1. [Open API Specification](https://swagger.io/specification/)
 2. [JSON Schema](https://json-schema.org/)
-
-
