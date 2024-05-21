@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.1.2](https://github.com/mdevils/api-typescript-generator/compare/v2.1.1...v2.1.2) (2024-05-21)
+
+
+### Bug Fixes
+
+* specify import type where necessary ([9facc9c](https://github.com/mdevils/api-typescript-generator/commit/9facc9ce47c463e2a244aede7752afb40c43f43f))
+
 ### [2.1.1](https://github.com/mdevils/api-typescript-generator/compare/v2.1.0...v2.1.1) (2024-05-20)
 
 
