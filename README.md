@@ -1,11 +1,11 @@
-# Open API Typescript Client Generator
+# OpenAPI Typescript Client Generator
 
-Generates Open API client for TypeScript. Extremely configurable.
+Generates OpenAPI client for TypeScript. Extremely configurable.
 
 ## Features
 
-1. Generates TypeScript models for all the schemas in the Open API document in a form of interfaces and type aliases.
-2. Generates TypeScript services for all the operations in the Open API document.
+1. Generates TypeScript models for all the schemas in the OpenAPI document in a form of interfaces and type aliases.
+2. Generates TypeScript services for all the operations in the OpenAPI document.
 3. Generates a client class that combines all the services.
 4. Uses `fetch` API for making HTTP requests by default, but can be configured to use any other HTTP client.
 5. May generate validation for the API responses if configured.
@@ -37,7 +37,7 @@ const configuration: ApiTypescriptGeneratorConfig = {
         {
             type: 'openapiClient',
             document: {
-                // The source of the Open API document.
+                // The source of the OpenAPI document.
                 // Can also be { type: 'file', path: 'path/to/file.yaml' }
                 // Both YAML and JSON formats are supported.
                 source: {
@@ -86,8 +86,8 @@ yarn openapi-codegen
 
 By default it generates:
 
-1. Models for all the schemas in the Open API document. Stored at `models` directory by default.
-2. Services for all the operations in the Open API document. Stored at `services` directory by default.
+1. Models for all the schemas in the OpenAPI document. Stored at `models` directory by default.
+2. Services for all the operations in the OpenAPI document. Stored at `services` directory by default.
 3. A client class that combines all the services. Stored at the root of the output directory by default.
 4. Core classes for handling HTTP requests and responses. Stored at `core` directory by default.
 
@@ -118,13 +118,13 @@ testApiClient().catch(console.error);
 
 ## Documentation
 
-The most important interface for now would be the [OpenApiClientGeneratorConfig](docs/interfaces/openapi_client.OpenApiClientGeneratorConfig.md) interface. It contains all the configuration options for the Open API Client Generator.
+The most important interface for now would be the [OpenApiClientGeneratorConfig](docs/interfaces/openapi_client.OpenApiClientGeneratorConfig.md) interface. It contains all the configuration options for the OpenAPI Client Generator.
 
 Types are exported as part of three modules, depending on the area of application:
 
 1. [`api-typescript-generator`](docs/modules/index.md) - The main module that exports the common API Generator Configuration types.
-2. [`api-typescript-generator/openapi-client`](docs/modules/openapi_client.md) - The module that exports the Open API Client Generator Configuration types.
-3. [`api-typescript-generator/openapi`](docs/modules/openapi.md) - The module that exports the Open API Document types.
+2. [`api-typescript-generator/openapi-client`](docs/modules/openapi_client.md) - The module that exports the OpenAPI Client Generator Configuration types.
+3. [`api-typescript-generator/openapi`](docs/modules/openapi.md) - The module that exports the OpenAPI Document types.
 
 At the moment only types are exported to be used with CLI. Callable API is planned for the future.
 
@@ -134,5 +134,5 @@ At the moment only types are exported to be used with CLI. Callable API is plann
 
 ## References
 
-1. [Open API Specification](https://swagger.io/specification/)
+1. [OpenAPI Specification](https://swagger.io/specification/)
 2. [JSON Schema](https://json-schema.org/)
