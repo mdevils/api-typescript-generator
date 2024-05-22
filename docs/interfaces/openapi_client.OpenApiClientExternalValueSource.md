@@ -17,7 +17,7 @@ Custom value source for the OpenAPI client generation customization.
 
 ### import
 
-• **import**: ``"default"`` \| \{ `name`: `string`  }
+• **import**: [`OpenApiClientExternalValueSourceImportEntity`](../modules/openapi_client.md#openapiclientexternalvaluesourceimportentity)
 
 Import name of the source.
 

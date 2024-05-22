@@ -37,6 +37,7 @@
 - [GenerateServiceName](openapi_client.md#generateservicename)
 - [OpenApiClientBuiltinBinaryType](openapi_client.md#openapiclientbuiltinbinarytype)
 - [OpenApiClientCustomizableBinaryType](openapi_client.md#openapiclientcustomizablebinarytype)
+- [OpenApiClientExternalValueSourceImportEntity](openapi_client.md#openapiclientexternalvaluesourceimportentity)
 
 ## Type Aliases
 
@@ -513,3 +514,11 @@ ___
 Ƭ **OpenApiClientCustomizableBinaryType**: [`OpenApiClientBuiltinBinaryType`](openapi_client.md#openapiclientbuiltinbinarytype) \| [`OpenApiClientExternalType`](../interfaces/openapi_client.OpenApiClientExternalType.md)
 
 Customizable binary type for the OpenAPI client generation.
+
+___
+
+### OpenApiClientExternalValueSourceImportEntity
+
+Ƭ **OpenApiClientExternalValueSourceImportEntity**: \{ `name`: `string`  } \| ``"default"``
+
+What needs to be imported from the external source.

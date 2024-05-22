@@ -128,6 +128,10 @@ Types are exported as part of three modules, depending on the area of applicatio
 
 At the moment only types are exported to be used with CLI. Callable API is planned for the future.
 
+## Collaborators
+
+ * [Mikhail Davydov](https://github.com/azproduction)
+
 ## References
 
 1. [Open API Specification](https://swagger.io/specification/)
