@@ -67,7 +67,7 @@ export class CommonValidationSchemaStorage<T> {
             if (!this.schemas[key]) {
                 throw new Error(`Schema with key "${key}" not found`);
             }
-            if (isJsonMediaType(data.mediaType)) {
+            if (data.mediaType && isJsonMediaType(data.mediaType)) {
                 try {
                     this.assertDataShape(this.schemas[key], data);
                 } catch (e) {
