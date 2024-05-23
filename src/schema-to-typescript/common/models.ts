@@ -302,7 +302,7 @@ export function generateModels({
                 });
                 if (validationContext) {
                     const registerFunctionName = generateRegisterValidationSchemasFunctionName(depInfo.scope);
-                    addDependencyImport(dependencyImports, depPath, depInfo.modelName, {
+                    addDependencyImport(dependencyImports, depPath, registerFunctionName, {
                         kind: 'value',
                         entity: {name: registerFunctionName}
                     });
