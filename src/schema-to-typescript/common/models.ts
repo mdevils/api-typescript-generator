@@ -1,5 +1,6 @@
 import path from 'path';
 import {
+    arrayExpression,
     blockStatement,
     callExpression,
     ExportNamedDeclaration,
@@ -147,6 +148,10 @@ function generateTypeExport({
 
 export const defaultModelsRelativeDirPath = 'models';
 
+function generateRegisterValidationSchemasFunctionName(scope: string) {
+    return applyEntityNameCase(`register ${scope} validation schemas`, 'camelCase');
+}
+
 export function generateModels({
     extractedTags,
     validationContext,
@@ -271,6 +276,7 @@ export function generateModels({
     const validationSchemaStorageArgumentName = 'validationSchemaStorage';
 
     for (const [scope, fileSchemaInfos] of Object.entries(schemasByScopes)) {
+        const modelRegisterValidationSchemaImports: Record<string, true> = {};
         const filename = path.join('.', relativeDirPath, formatFilename(scope, {...filenameFormat, extension: '.ts'}));
         const dependencyImports: DependencyImports = {};
         const exports: ExportNamedDeclaration[] = [];
@@ -278,10 +284,7 @@ export function generateModels({
         const importPath = path.join(relativeDirPath, formatFilename(scope, filenameFormat));
         let registerValidationSchemasImportName: string | undefined = undefined;
         if (validationContext) {
-            registerValidationSchemasImportName = applyEntityNameCase(
-                `register ${scope} validation schemas`,
-                'camelCase'
-            );
+            registerValidationSchemasImportName = generateRegisterValidationSchemasFunctionName(scope);
         }
         for (const {dependencies, modelName, schemaName, schema} of fileSchemaInfos) {
             for (const dependency of dependencies) {
@@ -297,6 +300,14 @@ export function generateModels({
                     kind: 'type',
                     entity: {name: depInfo.modelName}
                 });
+                if (validationContext) {
+                    const registerFunctionName = generateRegisterValidationSchemasFunctionName(depInfo.scope);
+                    addDependencyImport(dependencyImports, depPath, depInfo.modelName, {
+                        kind: 'value',
+                        entity: {name: registerFunctionName}
+                    });
+                    modelRegisterValidationSchemaImports[registerFunctionName] = true;
+                }
             }
             exports.push(
                 extendDependenciesAndGetResult(
@@ -351,12 +362,26 @@ export function generateModels({
             };
         }
         const otherStatements: Statement[] = [];
-        if (
-            commonValidationSchemaStorage &&
-            registerValidationSchemasImportName &&
-            validationContext &&
-            validationStatements.length > 0
-        ) {
+        if (Object.keys(modelRegisterValidationSchemaImports).length > 0 && validationContext) {
+            validationStatements.push(
+                expressionStatement(
+                    callExpression(
+                        memberExpression(
+                            identifier(validationContext.validationSchemaStorageImportName),
+                            identifier('registerOnce')
+                        ),
+                        [
+                            arrayExpression(
+                                Object.keys(modelRegisterValidationSchemaImports).map((registerCallbackName) =>
+                                    identifier(registerCallbackName)
+                                )
+                            )
+                        ]
+                    )
+                )
+            );
+        }
+        if (commonValidationSchemaStorage && registerValidationSchemasImportName && validationContext) {
             addDependencyImport(
                 dependencyImports,
                 getRelativeImportPath(importPath, commonValidationSchemaStorage.importPath),

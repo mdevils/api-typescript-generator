@@ -14,6 +14,13 @@ const configuration: ApiTypescriptGeneratorConfig = {
             outputDirPath: path.join(__dirname, 'petstore-api-client'),
             client: {
                 name: 'PetStoreApiClient'
+            },
+            operations: {
+                validateResponse: true,
+                makeResponseValidationSchemasExtensible: true
+            },
+            validation: {
+                library: 'zod'
             }
         }
     ]
