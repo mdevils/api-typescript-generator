@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.1.3](https://github.com/mdevils/api-typescript-generator/compare/v2.1.2...v2.1.3) (2024-05-23)
+
+
+### Bug Fixes
+
+* fix checking for media types in validation storage ([a062437](https://github.com/mdevils/api-typescript-generator/commit/a062437fcf5beb6948134ea595f49ba0512b9a9e))
+
 ### [2.1.2](https://github.com/mdevils/api-typescript-generator/compare/v2.1.1...v2.1.2) (2024-05-21)
 
 
