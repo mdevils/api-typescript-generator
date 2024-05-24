@@ -10,6 +10,7 @@
 - [CommonOpenApiClientGeneratorConfig](../interfaces/index.CommonOpenApiClientGeneratorConfig.md)
 - [CommonOpenApiClientGeneratorConfigDocument](../interfaces/index.CommonOpenApiClientGeneratorConfigDocument.md)
 - [CommonOpenApiClientGeneratorConfigDocumentPatch](../interfaces/index.CommonOpenApiClientGeneratorConfigDocumentPatch.md)
+- [CommonOpenApiClientGeneratorConfigPostprocess](../interfaces/index.CommonOpenApiClientGeneratorConfigPostprocess.md)
 - [FilenameFormat](../interfaces/index.FilenameFormat.md)
 - [JsDocBlock](../interfaces/index.JsDocBlock.md)
 - [JsDocBlockTag](../interfaces/index.JsDocBlockTag.md)

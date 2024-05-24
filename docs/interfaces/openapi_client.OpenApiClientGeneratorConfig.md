@@ -121,7 +121,7 @@ ___
 
 ### postprocess
 
-• `Optional` **postprocess**: `CommonOpenApiClientGeneratorConfigPostprocess`
+• `Optional` **postprocess**: [`CommonOpenApiClientGeneratorConfigPostprocess`](index.CommonOpenApiClientGeneratorConfigPostprocess.md)
 
 Configuration for the generated client files.
 
