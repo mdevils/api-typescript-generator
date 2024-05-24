@@ -130,11 +130,31 @@ export interface CommonOpenApiClientGeneratorConfigDocument {
 }
 
 /**
+ * Configuration for postprocessing the generated files.
+ */
+export interface CommonOpenApiClientGeneratorConfigPostprocess {
+    /**
+     * If true, runs ESLint on the generated files.
+     */
+    eslint?: boolean;
+}
+
+/**
  * Common configuration for the API client generators.
  */
 export interface CommonOpenApiClientGeneratorConfig {
+    /**
+     * Configuration for the OpenAPI document.
+     */
     document: CommonOpenApiClientGeneratorConfigDocument;
+    /**
+     * Output directory for the generated client files.
+     */
     outputDirPath: string;
+    /**
+     * Configuration for the generated client files.
+     */
+    postprocess?: CommonOpenApiClientGeneratorConfigPostprocess;
 }
 
 export interface ClientGenerationResult {

@@ -21,6 +21,9 @@ const configuration: ApiTypescriptGeneratorConfig = {
             },
             validation: {
                 library: 'zod'
+            },
+            postprocess: {
+                eslint: true
             }
         }
     ]

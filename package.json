@@ -53,6 +53,7 @@
     "@babel/preset-typescript": "^7.24.1",
     "@commitlint/cli": "^17.6.6",
     "@commitlint/config-conventional": "^17.6.6",
+    "@types/eslint": "^8.56.10",
     "@types/esutils": "^2.0.0",
     "@types/glob": "^7.2.0",
     "@types/jest": "^29.5.2",
