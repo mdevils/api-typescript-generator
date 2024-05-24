@@ -18,6 +18,7 @@ Common configuration for the API client generators.
 
 - [document](index.CommonOpenApiClientGeneratorConfig.md#document)
 - [outputDirPath](index.CommonOpenApiClientGeneratorConfig.md#outputdirpath)
+- [postprocess](index.CommonOpenApiClientGeneratorConfig.md#postprocess)
 
 ## Properties
 
@@ -25,8 +26,20 @@ Common configuration for the API client generators.
 
 • **document**: [`CommonOpenApiClientGeneratorConfigDocument`](index.CommonOpenApiClientGeneratorConfigDocument.md)
 
+Configuration for the OpenAPI document.
+
 ___
 
 ### outputDirPath
 
 • **outputDirPath**: `string`
+
+Output directory for the generated client files.
+
+___
+
+### postprocess
+
+• `Optional` **postprocess**: `CommonOpenApiClientGeneratorConfigPostprocess`
+
+Configuration for the generated client files.

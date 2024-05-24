@@ -25,6 +25,7 @@ Configuration for generating an OpenAPI client.
 - [models](openapi_client.OpenApiClientGeneratorConfig.md#models)
 - [operations](openapi_client.OpenApiClientGeneratorConfig.md#operations)
 - [outputDirPath](openapi_client.OpenApiClientGeneratorConfig.md#outputdirpath)
+- [postprocess](openapi_client.OpenApiClientGeneratorConfig.md#postprocess)
 - [services](openapi_client.OpenApiClientGeneratorConfig.md#services)
 - [type](openapi_client.OpenApiClientGeneratorConfig.md#type)
 - [validation](openapi_client.OpenApiClientGeneratorConfig.md#validation)
@@ -74,6 +75,8 @@ ___
 
 • **document**: [`CommonOpenApiClientGeneratorConfigDocument`](index.CommonOpenApiClientGeneratorConfigDocument.md)
 
+Configuration for the OpenAPI document.
+
 #### Inherited from
 
 [CommonOpenApiClientGeneratorConfig](index.CommonOpenApiClientGeneratorConfig.md).[document](index.CommonOpenApiClientGeneratorConfig.md#document)
@@ -108,9 +111,23 @@ ___
 
 • **outputDirPath**: `string`
 
+Output directory for the generated client files.
+
 #### Inherited from
 
 [CommonOpenApiClientGeneratorConfig](index.CommonOpenApiClientGeneratorConfig.md).[outputDirPath](index.CommonOpenApiClientGeneratorConfig.md#outputdirpath)
+
+___
+
+### postprocess
+
+• `Optional` **postprocess**: `CommonOpenApiClientGeneratorConfigPostprocess`
+
+Configuration for the generated client files.
+
+#### Inherited from
+
+[CommonOpenApiClientGeneratorConfig](index.CommonOpenApiClientGeneratorConfig.md).[postprocess](index.CommonOpenApiClientGeneratorConfig.md#postprocess)
 
 ___
 
