@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.2.0](https://github.com/mdevils/api-typescript-generator/compare/v2.1.7...v2.2.0) (2024-05-24)
+
+
+### Features
+
+* add eslint formatting, checking generated files ([b0a0f76](https://github.com/mdevils/api-typescript-generator/commit/b0a0f7692659f189e600908236b7264f99472272))
+
 ### [2.1.7](https://github.com/mdevils/api-typescript-generator/compare/v2.1.6...v2.1.7) (2024-05-23)
 
 
