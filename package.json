@@ -45,6 +45,7 @@
     "lint": "eslint {src,test,tools}/**/*.ts",
     "lint:fix": "eslint --fix {src,test,tools}/**/*.ts",
     "test": "jest",
+    "test:watch": "jest --watch --watchPathIgnorePatterns tmp",
     "test:update": "ts-node src/cli/index.ts generate test/pet-store/api-typescript-generator-config.ts",
     "release": "standard-version"
   },

@@ -164,7 +164,7 @@ export function getOperationReturnType({
                     : binaryType;
                 successfulResponses.push({status, mediaTypeString, response, mediaType});
                 if (validationContext) {
-                    const {validationProvider, validationSchemaStorageImportName} = validationContext;
+                    const {validationSchemaStorageImportName} = validationContext;
                     if (mediaType.schema === undefined) {
                         mediaTypeSchemas[status][mediaTypeString] = null;
                     } else {
@@ -186,17 +186,12 @@ export function getOperationReturnType({
                                             modelData.registerValidationSchemasImportName
                                         ] = true;
                                     }
-                                    return extendDependenciesAndGetResult(
-                                        validationProvider.generateLazyGetter(
-                                            callExpression(
-                                                memberExpression(
-                                                    identifier(validationSchemaStorageImportName),
-                                                    identifier('get')
-                                                ),
-                                                [stringLiteral(modelData.modelName)]
-                                            )
+                                    return callExpression(
+                                        memberExpression(
+                                            identifier(validationSchemaStorageImportName),
+                                            identifier('lazy')
                                         ),
-                                        dependencyImports
+                                        [stringLiteral(modelData.modelName)]
                                     );
                                 }
                             }),
@@ -236,7 +231,13 @@ export function getOperationReturnType({
                     [
                         stringLiteral(validationSchemaName),
                         extendDependenciesAndGetResult(
-                            validationProvider.generateOperationResponseSchema(mediaTypeSchemas),
+                            validationProvider.generateSetModelNameCall(
+                                extendDependenciesAndGetResult(
+                                    validationProvider.generateOperationResponseSchema(mediaTypeSchemas),
+                                    dependencyImports
+                                ),
+                                validationSchemaName
+                            ),
                             dependencyImports
                         )
                     ]

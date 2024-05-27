@@ -4,8 +4,18 @@
 
 ## Table of contents
 
+### Classes
+
+- [CommonHttpClientError](../classes/openapi_client.CommonHttpClientError.md)
+
 ### Interfaces
 
+- [CommonHttpClientFetchRequest](../interfaces/openapi_client.CommonHttpClientFetchRequest.md)
+- [CommonHttpClientFetchRequestHeaders](../interfaces/openapi_client.CommonHttpClientFetchRequestHeaders.md)
+- [CommonHttpClientFetchResponse](../interfaces/openapi_client.CommonHttpClientFetchResponse.md)
+- [CommonHttpClientOptions](../interfaces/openapi_client.CommonHttpClientOptions.md)
+- [CommonHttpClientRequestHeaders](../interfaces/openapi_client.CommonHttpClientRequestHeaders.md)
+- [CommonHttpClientResponse](../interfaces/openapi_client.CommonHttpClientResponse.md)
 - [OpenApiClientExternalType](../interfaces/openapi_client.OpenApiClientExternalType.md)
 - [OpenApiClientExternalValue](../interfaces/openapi_client.OpenApiClientExternalValue.md)
 - [OpenApiClientExternalValueSource](../interfaces/openapi_client.OpenApiClientExternalValueSource.md)
@@ -23,6 +33,9 @@
 
 ### Type Aliases
 
+- [CommonHttpClientFetchResponseBody](openapi_client.md#commonhttpclientfetchresponsebody)
+- [CommonHttpClientRequest](openapi_client.md#commonhttpclientrequest)
+- [CommonHttpClientResponseHeaders](openapi_client.md#commonhttpclientresponseheaders)
 - [GenerateClientJsDoc](openapi_client.md#generateclientjsdoc)
 - [GenerateModelJsDoc](openapi_client.md#generatemodeljsdoc)
 - [GenerateModelNameCallback](openapi_client.md#generatemodelnamecallback)
@@ -40,6 +53,26 @@
 - [OpenApiClientExternalValueSourceImportEntity](openapi_client.md#openapiclientexternalvaluesourceimportentity)
 
 ## Type Aliases
+
+### CommonHttpClientFetchResponseBody
+
+Ƭ **CommonHttpClientFetchResponseBody**: \{ `data`: `unknown` ; `type`: ``"json"``  } \| \{ `data`: `Blob` ; `type`: ``"blob"``  } \| \{ `data`: `ReadableStream`\<`Uint8Array`\> ; `type`: ``"readableStream"``  }
+
+___
+
+### CommonHttpClientRequest
+
+Ƭ **CommonHttpClientRequest**: `Omit`\<[`CommonHttpClientFetchRequest`](../interfaces/openapi_client.CommonHttpClientFetchRequest.md), ``"body"`` \| ``"headers"`` \| ``"cache"`` \| ``"credentials"`` \| ``"redirect"``\> & \{ `body?`: `unknown` ; `headers?`: [`CommonHttpClientRequestHeaders`](../interfaces/openapi_client.CommonHttpClientRequestHeaders.md) ; `path`: `string` ; `pathParams?`: `Record`\<`string`, `unknown`\> ; `query?`: `Record`\<`string`, `unknown`\>  } & `Partial`\<`Pick`\<[`CommonHttpClientFetchRequest`](../interfaces/openapi_client.CommonHttpClientFetchRequest.md), ``"cache"`` \| ``"credentials"`` \| ``"redirect"``\>\>
+
+Request in terms of OpenAPI.
+
+___
+
+### CommonHttpClientResponseHeaders
+
+Ƭ **CommonHttpClientResponseHeaders**: `Record`\<`string`, `string`\> & \{ `set-cookie?`: `string`[]  }
+
+___
 
 ### GenerateClientJsDoc
 

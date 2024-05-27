@@ -11,7 +11,9 @@ type RegisterOnceCallback<T> = (validationSchemaStorage: CommonValidationSchemaS
 
 type CommonValidationSchemaStorageMakeExtensible<T> = (schema: T) => T;
 
-type CommonValidationSchemaStorageFormatErrorMessage = (error: Error) => string;
+type CommonValidationSchemaStorageFormatErrorMessage<T> = (error: Error, schema: T) => string;
+
+type CommonValidationSchemaStorageLazyGetter<T> = (callback: () => T) => T;
 
 export class CommonValidationSchemaStorage<T> {
     protected assertDataShape: CommonValidationSchemaStorageAssertDataShape<T>;
@@ -19,20 +21,24 @@ export class CommonValidationSchemaStorage<T> {
     protected schemas: Record<string, T> = {};
     protected registeredCallbacks = new Set<RegisterOnceCallback<T>>();
     protected errorClass: CommonHttpClientOptions['errorClass'] = CommonHttpClientError;
-    protected formatErrorMessage: CommonValidationSchemaStorageFormatErrorMessage;
+    protected formatErrorMessage: CommonValidationSchemaStorageFormatErrorMessage<T>;
+    protected lazyGetter: CommonValidationSchemaStorageLazyGetter<T>;
 
     constructor({
         assertDataShape,
         makeExtensible,
-        formatErrorMessage
+        formatErrorMessage,
+        lazyGetter
     }: {
         assertDataShape: CommonValidationSchemaStorageAssertDataShape<T>;
         makeExtensible: CommonValidationSchemaStorageMakeExtensible<T>;
-        formatErrorMessage: CommonValidationSchemaStorageFormatErrorMessage;
+        formatErrorMessage: CommonValidationSchemaStorageFormatErrorMessage<T>;
+        lazyGetter: CommonValidationSchemaStorageLazyGetter<T>;
     }) {
         this.assertDataShape = assertDataShape;
         this.makeExtensible = makeExtensible;
         this.formatErrorMessage = formatErrorMessage;
+        this.lazyGetter = lazyGetter;
     }
 
     register(key: string, schema: T) {
@@ -56,27 +62,28 @@ export class CommonValidationSchemaStorage<T> {
         return this.schemas[key];
     }
 
-    lazy(key: string): () => T {
-        return () => this.schemas[key];
+    lazy(key: string): T {
+        return this.lazyGetter(() => this.schemas[key]);
     }
 
     validator<D extends {mediaType: string; status: number; body: unknown; response: CommonHttpClientFetchResponse}>(
         key: string
     ): (data: D) => D {
         return (data: D) => {
-            if (!this.schemas[key]) {
+            const schema = this.schemas[key];
+            if (schema === undefined) {
                 throw new Error(`Schema with key "${key}" not found`);
             }
             if (data.mediaType !== undefined && isJsonMediaType(data.mediaType)) {
                 try {
-                    this.assertDataShape(this.schemas[key], data);
-                } catch (e) {
+                    this.assertDataShape(schema, data);
+                } catch (error) {
                     throw new this.errorClass(
                         new URL(data.response.url),
                         undefined,
                         data.response,
                         undefined,
-                        e instanceof Error ? this.formatErrorMessage(e) : String(e)
+                        error instanceof Error ? this.formatErrorMessage(error, schema) : String(error)
                     );
                 }
             }

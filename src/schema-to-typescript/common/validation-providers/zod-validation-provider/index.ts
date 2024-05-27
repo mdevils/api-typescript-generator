@@ -76,7 +76,7 @@ async function loadExportsFromFile(filename: string) {
                         throw new Error('Import specifiers should not alter imported names.');
                     }
                     addDependencyImport(dependencyImports, statement.source.value, specifier.local.name, {
-                        kind: specifier.importKind === 'type' ? 'type' : 'value',
+                        kind: specifier.importKind === 'type' || statement.importKind === 'type' ? 'type' : 'value',
                         entity: {name: specifier.imported.name}
                     });
                 }
@@ -119,7 +119,7 @@ export class ZodValidationProvider extends ValidationProvider {
     generateSchema(schema: OpenApiSchema, context: ValidationProviderContext): ResultWithDependencyImports<Expression> {
         return this.withDependencyImports(this.generateSchemaItem(schema, context));
     }
-    generateSchemaItem(schema: OpenApiSchema, context: ValidationProviderContext): Expression {
+    protected generateSchemaItem(schema: OpenApiSchema, context: ValidationProviderContext): Expression {
         if (schema === true) {
             return zCall('unknown', []);
         }
@@ -464,11 +464,16 @@ export class ZodValidationProvider extends ValidationProvider {
         return zCall('unknown', []);
     }
     generateLazyGetter(expression: Expression) {
-        return this.withDependencyImports(zCall('lazy', [arrowFunctionExpression([], expression)]));
+        return this.withDependencyImports(zCall('lazy', [expression]));
     }
     generateAssertCall(validationSchema: Expression, data: Expression) {
         return this.withDependencyImports(
             callExpression(memberExpression(validationSchema, identifier('parse')), [data])
+        );
+    }
+    generateSetModelNameCall(validationSchema: Expression, modelName: string): ResultWithDependencyImports<Expression> {
+        return this.withDependencyImports(
+            callExpression(memberExpression(validationSchema, identifier('describe')), [stringLiteral(modelName)])
         );
     }
     generateOperationResponseSchema(responses: {[statusCode: string]: {[mediaType: string]: Expression | null}}) {

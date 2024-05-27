@@ -81,6 +81,16 @@ export async function generateValidationSchemaStorage({
                                     await validationProvider.generateFormatErrorMessageCallback(),
                                     dependencyImports
                                 )
+                            ),
+                            objectProperty(
+                                identifier('lazyGetter'),
+                                arrowFunctionExpression(
+                                    [identifier('getSchema')],
+                                    extendDependenciesAndGetResult(
+                                        await validationProvider.generateLazyGetter(identifier('getSchema')),
+                                        dependencyImports
+                                    )
+                                )
                             )
                         ])
                     ]),

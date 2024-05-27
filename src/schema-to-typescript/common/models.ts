@@ -333,21 +333,22 @@ export function generateModels({
                             [
                                 stringLiteral(modelName),
                                 extendDependenciesAndGetResult(
-                                    validationProvider.generateSchema(schema, {
-                                        getNamedSchemaReference: (name: string) =>
-                                            extendDependenciesAndGetResult(
-                                                validationProvider.generateLazyGetter(
+                                    validationProvider.generateSetModelNameCall(
+                                        extendDependenciesAndGetResult(
+                                            validationProvider.generateSchema(schema, {
+                                                getNamedSchemaReference: (name: string) =>
                                                     callExpression(
                                                         memberExpression(
                                                             identifier(validationSchemaStorageArgumentName),
-                                                            identifier('get')
+                                                            identifier('lazy')
                                                         ),
                                                         [stringLiteral(getModelName(name))]
                                                     )
-                                                ),
-                                                dependencyImports
-                                            )
-                                    }),
+                                            }),
+                                            dependencyImports
+                                        ),
+                                        modelName
+                                    ),
                                     dependencyImports
                                 )
                             ]

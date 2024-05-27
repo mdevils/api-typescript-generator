@@ -22,6 +22,10 @@ export abstract class ValidationProvider {
         validationSchema: Expression,
         data: Expression
     ): ResultWithDependencyImports<Expression>;
+    abstract generateSetModelNameCall(
+        validationSchema: Expression,
+        modelName: string
+    ): ResultWithDependencyImports<Expression>;
     abstract generateOperationResponseSchema(responses: {
         [statusCode: string]: {[mediaType: string]: Expression | null};
     }): ResultWithDependencyImports<Expression>;
