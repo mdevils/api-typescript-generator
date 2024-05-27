@@ -144,6 +144,7 @@ describe('ZodValidationProvider', () => {
                 entity: {name: validationSchemaStorage.importName}
             }
         );
+        await fs.mkdir(path.join(__dirname, 'tmp'), {recursive: true});
         await Promise.all([
             fs.writeFile(
                 path.join(__dirname, 'tmp', validationSchemaStorage.file.filename),
