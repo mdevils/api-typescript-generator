@@ -29,3 +29,16 @@ export type {
     OpenApiClientGeneratorConfigValidationSchemaStorage,
     OpenApiClientExternalValueSourceImportEntity
 } from './schema-to-typescript/openapi-to-typescript-client';
+
+export type {
+    CommonHttpClientFetchRequest,
+    CommonHttpClientFetchResponse,
+    CommonHttpClientError,
+    CommonHttpClientRequest,
+    CommonHttpClientResponse,
+    CommonHttpClientFetchResponseBody,
+    CommonHttpClientFetchRequestHeaders,
+    CommonHttpClientResponseHeaders,
+    CommonHttpClientOptions,
+    CommonHttpClientRequestHeaders
+} from './schema-to-typescript/common/core/common-http-client';

@@ -28,34 +28,100 @@ export interface CommonHttpClientFetchRequestHeaders {
     [headerName: string]: string;
 }
 
+/**
+ * Request prepared for the fetch function.
+ */
 export interface CommonHttpClientFetchRequest {
+    /**
+     * HTTP Method.
+     */
     method: 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE' | 'CONNECT' | 'OPTIONS' | 'PATCH';
+    /**
+     * Request headers.
+     */
     headers: CommonHttpClientFetchRequestHeaders;
+    /**
+     * Request body.
+     */
     body?: BodyInit;
+    /**
+     * Cache mode.
+     */
     cache: 'default' | 'force-cache' | 'no-cache' | 'no-store' | 'only-if-cached' | 'reload';
+    /**
+     * Credentials mode.
+     */
     credentials: 'include' | 'omit' | 'same-origin';
+    /**
+     * Redirect mode.
+     */
     redirect: 'error' | 'follow' | 'manual';
+    /**
+     * Custom request properties. Can be used to pass metadata to the fetch function.
+     */
     customRequestProps?: Record<string, unknown>;
 }
 
+/**
+ * Request in terms of OpenAPI.
+ */
 export type CommonHttpClientRequest = Omit<
     CommonHttpClientFetchRequest,
     'body' | 'headers' | 'cache' | 'credentials' | 'redirect'
 > & {
+    /**
+     * Path to the resource.
+     */
     path: string;
+    /**
+     * Path parameters, i.e. {id}.
+     */
     pathParams?: Record<string, unknown>;
+    /**
+     * Query parameters.
+     */
     query?: Record<string, unknown>;
+    /**
+     * Request body.
+     */
     body?: unknown;
+    /**
+     * Request headers.
+     */
     headers?: CommonHttpClientRequestHeaders;
 } & Partial<Pick<CommonHttpClientFetchRequest, 'cache' | 'credentials' | 'redirect'>>;
 
+/**
+ * Response of the fetch function.
+ */
 export interface CommonHttpClientFetchResponse {
+    /**
+     * HTTP status code.
+     */
     status: number;
+    /**
+     * HTTP status code explanation.
+     */
     statusText: string;
+    /**
+     * Response body.
+     */
     body: CommonHttpClientFetchResponseBody;
+    /**
+     * Whether the request was successful. True for 2xx status codes.
+     */
     ok: boolean;
+    /**
+     * The final URL of the request (after redirects).
+     */
     url: string;
+    /**
+     * Response headers.
+     */
     headers: CommonHttpClientResponseHeaders;
+    /**
+     * Custom request properties. Can be used to pass metadata outside the fetch function.
+     */
     customRequestProps?: Record<string, unknown>;
 }
 
