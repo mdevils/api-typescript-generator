@@ -39,7 +39,7 @@
   "bin": "lib/cli/index.js",
   "scripts": {
     "precheck": "tsc --noEmit && jest && ",
-    "build": "rimraf lib && tsc -p tsconfig.build.json && cp -R src/schema-to-typescript/common/core lib/schema-to-typescript/common/core && cp -R src/schema-to-typescript/common/validation-providers/zod-validation-provider/*-*.ts lib/schema-to-typescript/common/validation-providers/zod-validation-provider",
+    "build": "rimraf lib && tsc -p tsconfig.build.json && cp -R src/schema-to-typescript/common/core/* lib/schema-to-typescript/common/core && cp -R src/schema-to-typescript/common/validation-providers/zod-validation-provider/*-*.ts lib/schema-to-typescript/common/validation-providers/zod-validation-provider",
     "build:docs": "rm -Rf docs && typedoc --exclude test --excludeInternal --excludeExternals --disableSources --plugin typedoc-plugin-markdown --entryDocument ../README.md --out docs src/index.ts src/openapi.ts src/openapi-client.ts && ts-node tools/cleanup-docs.ts",
     "prepublishOnly": "npm run build && npm run build:docs",
     "lint": "eslint {src,test,tools}/**/*.ts",
