@@ -27,6 +27,11 @@ export async function postprocessFiles({
                 const [result] = await eslint.lintText(file.data, {
                     filePath: path.resolve(outputDirPath, file.filename)
                 });
+                for (const message of result.messages) {
+                    if (message.fatal) {
+                        throw new Error(`Fatal ESLint error in ${file.filename}: ${message.message}`);
+                    }
+                }
                 return {
                     ...file,
                     data: result.output ?? file.data
