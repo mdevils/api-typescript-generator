@@ -66,15 +66,16 @@ yargs(hideBin(process.argv))
                 switch (generateConfig.type) {
                     case 'openapiClient':
                         const document = await loadOpenApiDocument(generateConfig.document);
-                        const files = await postprocessFiles(
-                            (
+                        const files = await postprocessFiles({
+                            files: (
                                 await openapiToTypescriptClient({
                                     document,
                                     generateConfig
                                 })
                             ).files,
-                            generateConfig.postprocess
-                        );
+                            config: generateConfig.postprocess,
+                            outputDirPath: generateConfig.outputDirPath
+                        });
                         const allDirectories = new Set<string>();
                         for (const {filename} of files) {
                             allDirectories.add(path.dirname(path.resolve(generateConfig.outputDirPath, filename)));
@@ -109,15 +110,16 @@ yargs(hideBin(process.argv))
                     case 'openapiClient':
                         if (
                             !(await compareGenerationResult({
-                                files: await postprocessFiles(
-                                    (
+                                files: await postprocessFiles({
+                                    files: (
                                         await openapiToTypescriptClient({
                                             document: await loadOpenApiDocument(generateConfig.document),
                                             generateConfig
                                         })
                                     ).files,
-                                    generateConfig.postprocess
-                                ),
+                                    config: generateConfig.postprocess,
+                                    outputDirPath: generateConfig.outputDirPath
+                                }),
                                 outputDirPath: generateConfig.outputDirPath,
                                 cleanupDirectories: getCleanupDirectories(generateConfig)
                             }))
