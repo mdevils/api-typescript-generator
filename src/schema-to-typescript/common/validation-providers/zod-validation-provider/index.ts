@@ -10,10 +10,12 @@ import {
     Expression,
     expressionStatement,
     identifier,
+    IfStatement,
     ifStatement,
     isIdentifier,
     isImportSpecifier,
     isVariableDeclaration,
+    logicalExpression,
     memberExpression,
     newExpression,
     numericLiteral,
@@ -555,16 +557,26 @@ export class ZodValidationProvider extends ValidationProvider {
                 otherwise = undefined;
             }
             caseEntries = Object.entries(cases);
-            let prefIfStatement = ifStatement(
-                buildCondition(caseEntries[0][0]),
-                buildStatement(caseEntries[0][1], caseEntries[0][0])
-            );
+            const ifBlockInfos: {condition: Expression; statement: Statement}[] = caseEntries.map(([key, value]) => ({
+                condition: buildCondition(key),
+                statement: buildStatement(value, key)
+            }));
+            const resultingIfBlocks: IfStatement[] = [];
+            while (ifBlockInfos.length > 0) {
+                const info = ifBlockInfos.shift()!;
+                for (let i = 0; i < ifBlockInfos.length; i++) {
+                    if (R.equals(ifBlockInfos[i].statement, info.statement)) {
+                        info.condition = logicalExpression('||', info.condition, ifBlockInfos[i].condition);
+                        ifBlockInfos.splice(i, 1);
+                        i--;
+                    }
+                }
+                resultingIfBlocks.push(ifStatement(info.condition, info.statement));
+            }
+            let prefIfStatement = resultingIfBlocks.shift()!;
             const result = prefIfStatement;
-            for (let i = 1; i < caseEntries.length; i++) {
-                const newIfStatement = ifStatement(
-                    buildCondition(caseEntries[i][0]),
-                    buildStatement(caseEntries[i][1], caseEntries[i][0])
-                );
+            while (resultingIfBlocks.length > 0) {
+                const newIfStatement = resultingIfBlocks.shift()!;
                 prefIfStatement.alternate = newIfStatement;
                 prefIfStatement = newIfStatement;
             }

@@ -5,9 +5,9 @@ export class CommonHttpService {
     constructor(getClientInstance: () => commonHttpClient.CommonHttpClient) {
         this.getClientInstance = () => {
             const classInstance = this.constructor as typeof CommonHttpService;
-            if (!classInstance.initialized) {
+            if (classInstance.initialized !== true) {
                 classInstance.initialized = true;
-                if (classInstance.initialize) {
+                if (classInstance.initialize !== undefined) {
                     classInstance.initialize();
                 }
             }
@@ -16,5 +16,5 @@ export class CommonHttpService {
         };
     }
     protected static initialized: boolean | undefined;
-    protected static initialize: () => void | undefined;
+    protected static initialize: (() => void) | undefined;
 }

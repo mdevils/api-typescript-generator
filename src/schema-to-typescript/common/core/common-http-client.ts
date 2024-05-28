@@ -219,7 +219,10 @@ async function convertResponseBody(
     throw new Error('Invalid response body type.');
 }
 
-type ResponseByMediaType<T extends CommonHttpClientResponse<unknown>, K extends string> = T extends any
+/**
+ * `extends unknown` is a trick to split the union into individual types.
+ */
+type ResponseByMediaType<T extends CommonHttpClientResponse<unknown>, K extends string> = T extends unknown
     ? ((a: T) => void) extends (a: {
           mediaType: K;
           status: infer _Status;
@@ -387,10 +390,8 @@ export class CommonHttpClient {
         response.headers.forEach((value, key) => {
             headers[key] = value;
         });
-        if (response.headers.has('set-cookie')) {
-            if ('getSetCookie' in response.headers) {
-                headers['set-cookie'] = (response.headers as {getSetCookie(): string[]}).getSetCookie();
-            }
+        if (response.headers.has('set-cookie') && 'getSetCookie' in response.headers) {
+            headers['set-cookie'] = (response.headers as {getSetCookie(): string[]}).getSetCookie();
         }
         return {
             status: response.status,
