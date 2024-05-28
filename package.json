@@ -1,6 +1,6 @@
 {
   "name": "api-typescript-generator",
-  "version": "2.2.5",
+  "version": "2.2.6",
   "description": "Generates OpenAPI TypeScript client. Extremely fast and flexible.",
   "license": "MIT",
   "author": "Marat Dulin <mdevils@gmail.com>",
