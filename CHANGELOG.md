@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.4.0](https://github.com/mdevils/api-typescript-generator/compare/v2.3.0...v2.4.0) (2024-06-03)
+
+
+### Features
+
+* ability to specify exact model names for export ([d46ea2b](https://github.com/mdevils/api-typescript-generator/commit/d46ea2bec9e6acd0254cdb982f23c7545012ccf5))
+
 ## [2.3.0](https://github.com/mdevils/api-typescript-generator/compare/v2.2.7...v2.3.0) (2024-06-03)
 
 
