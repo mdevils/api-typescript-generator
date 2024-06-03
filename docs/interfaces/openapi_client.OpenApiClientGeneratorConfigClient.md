@@ -12,6 +12,7 @@ Configuration for generating the client.
 
 - [baseUrl](openapi_client.OpenApiClientGeneratorConfigClient.md#baseurl)
 - [errorClassName](openapi_client.OpenApiClientGeneratorConfigClient.md#errorclassname)
+- [exportErrorClass](openapi_client.OpenApiClientGeneratorConfigClient.md#exporterrorclass)
 - [exportModels](openapi_client.OpenApiClientGeneratorConfigClient.md#exportmodels)
 - [exportServices](openapi_client.OpenApiClientGeneratorConfigClient.md#exportservices)
 - [filename](openapi_client.OpenApiClientGeneratorConfigClient.md#filename)
@@ -40,30 +41,44 @@ Name of the class for http and other errors. Example: `MyApiClientError`.
 
 ___
 
+### exportErrorClass
+
+• `Optional` **exportErrorClass**: `boolean`
+
+Whether to export the error class from the client file.
+
+**`Default`**
+
+```ts
+true
+```
+
+___
+
 ### exportModels
 
-• `Optional` **exportModels**: `boolean`
+• `Optional` **exportModels**: ``"all"`` \| ``"none"`` \| \{ `models`: `string`[]  }
 
 Whether to export models from the client file.
 
 **`Default`**
 
 ```ts
-false
+'none'
 ```
 
 ___
 
 ### exportServices
 
-• `Optional` **exportServices**: `boolean`
+• `Optional` **exportServices**: ``"all"`` \| ``"none"`` \| \{ `services`: `string`[]  }
 
 Whether to export services from the client file.
 
 **`Default`**
 
 ```ts
-false
+'none'
 ```
 
 ___

@@ -18,4 +18,5 @@ Configuration for postprocessing the generated files.
 
 • `Optional` **eslint**: `boolean`
 
-If true, runs ESLint on the generated files.
+If true, runs ESLint on the generated files. ESlint should be installed in the project and the configuration
+should be present. This postprocess step can take a long time for large schemas.
