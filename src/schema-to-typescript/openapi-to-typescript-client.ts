@@ -690,15 +690,31 @@ export interface OpenApiClientGeneratorConfigClient {
     /**
      * Whether to export services from the client file.
      *
-     * @default false
+     * @default 'none'
      */
-    exportServices?: boolean;
+    exportServices?:
+        | 'all'
+        | 'none'
+        | {
+              services: string[];
+          };
     /**
      * Whether to export models from the client file.
      *
-     * @default false
+     * @default 'none'
      */
-    exportModels?: boolean;
+    exportModels?:
+        | 'all'
+        | 'none'
+        | {
+              models: string[];
+          };
+    /**
+     * Whether to export the error class from the client file.
+     *
+     * @default true
+     */
+    exportErrorClass?: boolean;
     /**
      * Client JSDoc generation callback.
      */

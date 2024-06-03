@@ -41,13 +41,13 @@
     "precheck": "tsc --noEmit && jest && ",
     "build": "rimraf lib && tsc -p tsconfig.build.json && cp -R src/schema-to-typescript/common/core/* lib/schema-to-typescript/common/core && cp -R src/schema-to-typescript/common/validation-providers/zod-validation-provider/*-*.ts lib/schema-to-typescript/common/validation-providers/zod-validation-provider",
     "build:docs": "rm -Rf docs && typedoc --exclude test --excludeInternal --excludeExternals --disableSources --plugin typedoc-plugin-markdown --entryDocument ../README.md --out docs src/index.ts src/openapi.ts src/openapi-client.ts && ts-node tools/cleanup-docs.ts",
-    "prepublishOnly": "npm run build && npm run build:docs",
+    "prepublishOnly": "npm run build",
     "lint": "eslint {src,test,tools}/**/*.ts",
     "lint:fix": "eslint --fix {src,test,tools}/**/*.ts",
     "test": "jest",
     "test:watch": "jest --watch --watchPathIgnorePatterns tmp",
     "test:update": "ts-node src/cli/index.ts generate test/pet-store/api-typescript-generator-config.ts",
-    "release": "standard-version"
+    "release": "npm run build:docs && standard-version"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.24.4",

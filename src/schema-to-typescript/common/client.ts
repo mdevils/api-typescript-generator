@@ -65,6 +65,7 @@ export function generateClient({
         name,
         exportModels,
         exportServices,
+        exportErrorClass,
         errorClassName,
         generateJsDoc,
         ...filenameConfig
@@ -111,13 +112,17 @@ export function generateClient({
     );
 
     const errorTypeName = errorClassName ?? `${name}Error`;
-    const errorTypeExport = exportNamedDeclaration(
-        classDeclaration(
-            identifier(errorTypeName),
-            memberExpression(identifier(commonHttpClientImportName), identifier(commonHttpClientErrorClassName)),
-            classBody([classProperty(identifier('name'), stringLiteral(errorTypeName))])
-        )
+    const additionalTypeStatements: Statement[] = [];
+    const errorClassDeclaration = classDeclaration(
+        identifier(errorTypeName),
+        memberExpression(identifier(commonHttpClientImportName), identifier(commonHttpClientErrorClassName)),
+        classBody([classProperty(identifier('name'), stringLiteral(errorTypeName))])
     );
+    if (exportErrorClass !== false) {
+        additionalTypeStatements.push(exportNamedDeclaration(errorClassDeclaration));
+    } else {
+        additionalTypeStatements.push(errorClassDeclaration);
+    }
 
     const clientClassBody = classBody([
         classProperty(
@@ -281,8 +286,14 @@ export function generateClient({
     const exportTypes: ExportNamedDeclaration = exportNamedDeclaration(null, []);
     exportTypes.exportKind = 'type';
 
-    if (exportModels) {
+    if (exportModels && exportModels !== 'none') {
+        const modelsToExport = new Set(
+            exportModels === 'all' ? modelImportInfos.map(({modelName}) => modelName) : exportModels.models
+        );
         for (const {modelName, importPath} of modelImportInfos) {
+            if (!modelsToExport.has(modelName)) {
+                continue;
+            }
             addDependencyImport(dependencyImports, getRelativeImportPath(clientImportPath, importPath), modelName, {
                 kind: 'type',
                 entity: {name: modelName}
@@ -293,8 +304,14 @@ export function generateClient({
 
     const exports: ExportNamedDeclaration = exportNamedDeclaration(null, []);
 
-    if (exportServices) {
+    if (exportServices && exportServices !== 'none') {
+        const servicesToExport = new Set(
+            exportServices === 'all' ? generatedServiceImports.map(({name}) => name) : exportServices.services
+        );
         for (const {name, importPath} of generatedServiceImports) {
+            if (!servicesToExport.has(name)) {
+                continue;
+            }
             addDependencyImport(dependencyImports, getRelativeImportPath(clientImportPath, importPath), name, {
                 kind: 'value',
                 entity: {name}
@@ -333,7 +350,7 @@ export function generateClient({
                 ),
                 ...generateTsImports(dependencyImports),
                 optionsTypeExport,
-                errorTypeExport,
+                ...additionalTypeStatements,
                 clientClass,
                 ...otherStatements,
                 ...(exportTypes.specifiers.length > 0 ? [exportTypes] : []),
