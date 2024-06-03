@@ -30,7 +30,7 @@
 
 ### CommonApiToTypescriptGeneratorSource
 
-Ƭ **CommonApiToTypescriptGeneratorSource**: \{ `path`: `string` ; `type`: ``"file"``  } \| \{ `type`: ``"url"`` ; `url`: `string`  }
+Ƭ **CommonApiToTypescriptGeneratorSource**: \{ `path`: `string` ; `type`: ``"file"``  } \| \{ `type`: ``"url"`` ; `url`: `string`  } \| \{ `object`: `unknown` ; `type`: ``"object"``  } \| \{ `data`: `string` ; `type`: ``"string"``  }
 
 Source of the API to generate TypeScript types from. Can be a file or a URL. Supports both YAML and JSON.
 
@@ -44,11 +44,11 @@ ___
 
 ### OpenApiDocumentPatchAllSchemas
 
-Ƭ **OpenApiDocumentPatchAllSchemas**: (`schemas`: \{ `[schemaName: string]`: [`OpenApiSchema`](openapi.md#openapischema);  }) => \{ `[schemaName: string]`: [`OpenApiSchema`](openapi.md#openapischema);  }
+Ƭ **OpenApiDocumentPatchAllSchemas**: (`schemas`: \{ `[schemaName: string]`: [`OpenApiSchema`](openapi.md#openapischema);  }) => \{ `[schemaName: string]`: [`OpenApiSchema`](openapi.md#openapischema);  } \| `Promise`\<\{ `[schemaName: string]`: [`OpenApiSchema`](openapi.md#openapischema);  }\>
 
 #### Type declaration
 
-▸ (`schemas`): `Object`
+▸ (`schemas`): \{ `[schemaName: string]`: [`OpenApiSchema`](openapi.md#openapischema);  } \| `Promise`\<\{ `[schemaName: string]`: [`OpenApiSchema`](openapi.md#openapischema);  }\>
 
 Callback to patch all schemas.
 
@@ -60,17 +60,17 @@ Callback to patch all schemas.
 
 ##### Returns
 
-`Object`
+\{ `[schemaName: string]`: [`OpenApiSchema`](openapi.md#openapischema);  } \| `Promise`\<\{ `[schemaName: string]`: [`OpenApiSchema`](openapi.md#openapischema);  }\>
 
 ___
 
 ### OpenApiDocumentPatchDocument
 
-Ƭ **OpenApiDocumentPatchDocument**: (`document`: [`OpenApiDocument`](../interfaces/openapi.OpenApiDocument.md)) => [`OpenApiDocument`](../interfaces/openapi.OpenApiDocument.md)
+Ƭ **OpenApiDocumentPatchDocument**: (`document`: [`OpenApiDocument`](../interfaces/openapi.OpenApiDocument.md)) => [`OpenApiDocument`](../interfaces/openapi.OpenApiDocument.md) \| `Promise`\<[`OpenApiDocument`](../interfaces/openapi.OpenApiDocument.md)\>
 
 #### Type declaration
 
-▸ (`document`): [`OpenApiDocument`](../interfaces/openapi.OpenApiDocument.md)
+▸ (`document`): [`OpenApiDocument`](../interfaces/openapi.OpenApiDocument.md) \| `Promise`\<[`OpenApiDocument`](../interfaces/openapi.OpenApiDocument.md)\>
 
 Callback to patch the whole OpenAPI document. Applies after all other patches.
 
@@ -82,17 +82,17 @@ Callback to patch the whole OpenAPI document. Applies after all other patches.
 
 ##### Returns
 
-[`OpenApiDocument`](../interfaces/openapi.OpenApiDocument.md)
+[`OpenApiDocument`](../interfaces/openapi.OpenApiDocument.md) \| `Promise`\<[`OpenApiDocument`](../interfaces/openapi.OpenApiDocument.md)\>
 
 ___
 
 ### OpenApiDocumentPatchOperation
 
-Ƭ **OpenApiDocumentPatchOperation**: (`operation`: [`OpenApiOperation`](../interfaces/openapi.OpenApiOperation.md), `path`: `string`, `httpMethod`: [`OpenApiHttpMethod`](openapi.md#openapihttpmethod)) => [`OpenApiOperation`](../interfaces/openapi.OpenApiOperation.md)
+Ƭ **OpenApiDocumentPatchOperation**: (`operation`: [`OpenApiOperation`](../interfaces/openapi.OpenApiOperation.md), `path`: `string`, `httpMethod`: [`OpenApiHttpMethod`](openapi.md#openapihttpmethod)) => [`OpenApiOperation`](../interfaces/openapi.OpenApiOperation.md) \| `Promise`\<[`OpenApiOperation`](../interfaces/openapi.OpenApiOperation.md)\>
 
 #### Type declaration
 
-▸ (`operation`, `path`, `httpMethod`): [`OpenApiOperation`](../interfaces/openapi.OpenApiOperation.md)
+▸ (`operation`, `path`, `httpMethod`): [`OpenApiOperation`](../interfaces/openapi.OpenApiOperation.md) \| `Promise`\<[`OpenApiOperation`](../interfaces/openapi.OpenApiOperation.md)\>
 
 Callback to patch an operation.
 
@@ -106,17 +106,17 @@ Callback to patch an operation.
 
 ##### Returns
 
-[`OpenApiOperation`](../interfaces/openapi.OpenApiOperation.md)
+[`OpenApiOperation`](../interfaces/openapi.OpenApiOperation.md) \| `Promise`\<[`OpenApiOperation`](../interfaces/openapi.OpenApiOperation.md)\>
 
 ___
 
 ### OpenApiDocumentPatchPathItem
 
-Ƭ **OpenApiDocumentPatchPathItem**: (`pathItem`: [`OpenApiPathItem`](openapi.md#openapipathitem), `path`: `string`) => [`OpenApiPathItem`](openapi.md#openapipathitem)
+Ƭ **OpenApiDocumentPatchPathItem**: (`pathItem`: [`OpenApiPathItem`](openapi.md#openapipathitem), `path`: `string`) => [`OpenApiPathItem`](openapi.md#openapipathitem) \| `Promise`\<[`OpenApiPathItem`](openapi.md#openapipathitem)\>
 
 #### Type declaration
 
-▸ (`pathItem`, `path`): [`OpenApiPathItem`](openapi.md#openapipathitem)
+▸ (`pathItem`, `path`): [`OpenApiPathItem`](openapi.md#openapipathitem) \| `Promise`\<[`OpenApiPathItem`](openapi.md#openapipathitem)\>
 
 Callback to patch a path item.
 
@@ -129,17 +129,17 @@ Callback to patch a path item.
 
 ##### Returns
 
-[`OpenApiPathItem`](openapi.md#openapipathitem)
+[`OpenApiPathItem`](openapi.md#openapipathitem) \| `Promise`\<[`OpenApiPathItem`](openapi.md#openapipathitem)\>
 
 ___
 
 ### OpenApiDocumentPatchSchema
 
-Ƭ **OpenApiDocumentPatchSchema**: (`schema`: [`OpenApiSchema`](openapi.md#openapischema), `schemaName`: `string`) => [`OpenApiSchema`](openapi.md#openapischema)
+Ƭ **OpenApiDocumentPatchSchema**: (`schema`: [`OpenApiSchema`](openapi.md#openapischema), `schemaName`: `string`) => [`OpenApiSchema`](openapi.md#openapischema) \| `Promise`\<[`OpenApiSchema`](openapi.md#openapischema)\>
 
 #### Type declaration
 
-▸ (`schema`, `schemaName`): [`OpenApiSchema`](openapi.md#openapischema)
+▸ (`schema`, `schemaName`): [`OpenApiSchema`](openapi.md#openapischema) \| `Promise`\<[`OpenApiSchema`](openapi.md#openapischema)\>
 
 Callback to patch a schema.
 
@@ -152,17 +152,17 @@ Callback to patch a schema.
 
 ##### Returns
 
-[`OpenApiSchema`](openapi.md#openapischema)
+[`OpenApiSchema`](openapi.md#openapischema) \| `Promise`\<[`OpenApiSchema`](openapi.md#openapischema)\>
 
 ___
 
 ### OpenApiDocumentPatchTags
 
-Ƭ **OpenApiDocumentPatchTags**: (`tags`: [`OpenApiTag`](../interfaces/openapi.OpenApiTag.md)[]) => [`OpenApiTag`](../interfaces/openapi.OpenApiTag.md)[]
+Ƭ **OpenApiDocumentPatchTags**: (`tags`: [`OpenApiTag`](../interfaces/openapi.OpenApiTag.md)[]) => [`OpenApiTag`](../interfaces/openapi.OpenApiTag.md)[] \| `Promise`\<[`OpenApiTag`](../interfaces/openapi.OpenApiTag.md)[]\>
 
 #### Type declaration
 
-▸ (`tags`): [`OpenApiTag`](../interfaces/openapi.OpenApiTag.md)[]
+▸ (`tags`): [`OpenApiTag`](../interfaces/openapi.OpenApiTag.md)[] \| `Promise`\<[`OpenApiTag`](../interfaces/openapi.OpenApiTag.md)[]\>
 
 Callback to patch tags.
 
@@ -174,4 +174,4 @@ Callback to patch tags.
 
 ##### Returns
 
-[`OpenApiTag`](../interfaces/openapi.OpenApiTag.md)[]
+[`OpenApiTag`](../interfaces/openapi.OpenApiTag.md)[] \| `Promise`\<[`OpenApiTag`](../interfaces/openapi.OpenApiTag.md)[]\>
