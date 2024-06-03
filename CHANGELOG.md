@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.3.0](https://github.com/mdevils/api-typescript-generator/compare/v2.2.7...v2.3.0) (2024-06-03)
+
+
+### Features
+
+* allow function/async function config, add more source types, make patch functions async ([639a985](https://github.com/mdevils/api-typescript-generator/commit/639a985bbe8dc6cfa8ee9701d2a511fab219e03f))
+
 ### [2.2.7](https://github.com/mdevils/api-typescript-generator/compare/v2.2.6...v2.2.7) (2024-05-28)
 
 
