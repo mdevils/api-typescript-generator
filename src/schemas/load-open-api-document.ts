@@ -9,7 +9,7 @@ export async function loadOpenApiDocument(
 ): Promise<OpenApiDocument> {
     let document = (await fetchSource(config.source)) as OpenApiDocument;
     if (config.patch) {
-        document = patchOpenApiDocument(document, config.patch);
+        document = await patchOpenApiDocument(document, config.patch);
     }
     document = resolveDocumentReferences(processOpenApiDocument(document));
     return document;

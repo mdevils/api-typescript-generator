@@ -27,8 +27,12 @@ async function loadConfig(filename: string): Promise<ApiTypescriptGeneratorConfi
             const {register} = await import('ts-node');
             register();
         }
-        const config = await import(fullFilename);
-        return 'default' in config ? config.default : config;
+        const configImport = await import(fullFilename);
+        let config = 'default' in configImport ? configImport.default : configImport;
+        if (typeof config === 'function') {
+            config = await config();
+        }
+        return config;
     } catch (e) {
         throw new Error(`Could not load configuration file: ${e instanceof Error ? e.message : e}`);
     }

@@ -26,6 +26,20 @@ export type CommonApiToTypescriptGeneratorSource =
            * URL to the file.
            */
           url: string;
+      }
+    | {
+          type: 'object';
+          /**
+           * OpenAPI schema as an object.
+           */
+          object: unknown;
+      }
+    | {
+          type: 'string';
+          /**
+           * OpenAPI schema as a string.
+           */
+          data: string;
       };
 
 /**
@@ -44,16 +58,23 @@ export interface ApiTypescriptGeneratorConfig {
  * @param schema The schema to patch.
  * @param schemaName The name of the schema.
  */
-export type OpenApiDocumentPatchSchema = (schema: OpenApiSchema, schemaName: string) => OpenApiSchema;
+export type OpenApiDocumentPatchSchema = (
+    schema: OpenApiSchema,
+    schemaName: string
+) => OpenApiSchema | Promise<OpenApiSchema>;
 
 /**
  * Callback to patch all schemas.
  *
  * @param schemas The schemas to patch.
  */
-export type OpenApiDocumentPatchAllSchemas = (schemas: {[schemaName: string]: OpenApiSchema}) => {
-    [schemaName: string]: OpenApiSchema;
-};
+export type OpenApiDocumentPatchAllSchemas = (schemas: {[schemaName: string]: OpenApiSchema}) =>
+    | {
+          [schemaName: string]: OpenApiSchema;
+      }
+    | Promise<{
+          [schemaName: string]: OpenApiSchema;
+      }>;
 
 /**
  * Callback to patch an operation.
@@ -66,26 +87,29 @@ export type OpenApiDocumentPatchOperation = (
     operation: OpenApiOperation,
     path: string,
     httpMethod: OpenApiHttpMethod
-) => OpenApiOperation;
+) => OpenApiOperation | Promise<OpenApiOperation>;
 /**
  * Callback to patch a path item.
  *
  * @param pathItem The path item to patch.
  * @param path The path of the path item.
  */
-export type OpenApiDocumentPatchPathItem = (pathItem: OpenApiPathItem, path: string) => OpenApiPathItem;
+export type OpenApiDocumentPatchPathItem = (
+    pathItem: OpenApiPathItem,
+    path: string
+) => OpenApiPathItem | Promise<OpenApiPathItem>;
 /**
  * Callback to patch tags.
  *
  * @param tags The tags to patch.
  */
-export type OpenApiDocumentPatchTags = (tags: OpenApiTag[]) => OpenApiTag[];
+export type OpenApiDocumentPatchTags = (tags: OpenApiTag[]) => OpenApiTag[] | Promise<OpenApiTag[]>;
 /**
  * Callback to patch the whole OpenAPI document. Applies after all other patches.
  *
  * @param document The OpenAPI document to patch.
  */
-export type OpenApiDocumentPatchDocument = (document: OpenApiDocument) => OpenApiDocument;
+export type OpenApiDocumentPatchDocument = (document: OpenApiDocument) => OpenApiDocument | Promise<OpenApiDocument>;
 
 /**
  * Configuration to patch an OpenAPI document.
