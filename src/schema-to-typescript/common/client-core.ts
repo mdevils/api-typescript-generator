@@ -14,8 +14,8 @@ function processCoreFile(
     return renderTypeScript(
         parse(
             code.replace(
-                /import(.*?)from '.\/([^']+)';/,
-                (_, [imports, path]) =>
+                /import(.*?)from '.\/([^']+)';/g,
+                (_, imports, path) =>
                     `import${imports}from ${JSON.stringify(`./${formatFilename(path, filenameFormat)}`)};`
             ),
             {
