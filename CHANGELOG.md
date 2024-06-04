@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.4.4](https://github.com/mdevils/api-typescript-generator/compare/v2.4.3...v2.4.4) (2024-06-04)
+
+
+### Bug Fixes
+
+* fix common validation schema imports ([172bf6d](https://github.com/mdevils/api-typescript-generator/commit/172bf6de3318cd3c13eae7626a38c6bca1439dbc))
+
 ### [2.4.3](https://github.com/mdevils/api-typescript-generator/compare/v2.4.2...v2.4.3) (2024-06-04)
 
 
