@@ -25,6 +25,15 @@ export default async function (): Promise<ApiTypescriptGeneratorConfig> {
                 },
                 postprocess: {
                     eslint: true
+                },
+                core: {
+                    cleanupFiles: true
+                },
+                models: {
+                    cleanupFiles: true
+                },
+                services: {
+                    cleanupFiles: true
                 }
             }
         ]
