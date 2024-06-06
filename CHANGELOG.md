@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.4.5](https://github.com/mdevils/api-typescript-generator/compare/v2.4.4...v2.4.5) (2024-06-06)
+
+
+### Bug Fixes
+
+* improve entity name formatting ([41bc93b](https://github.com/mdevils/api-typescript-generator/commit/41bc93bdf830ba837c3e86a93c9962f09523a4fe))
+
 ### [2.4.4](https://github.com/mdevils/api-typescript-generator/compare/v2.4.3...v2.4.4) (2024-06-04)
 
 
