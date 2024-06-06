@@ -9,6 +9,7 @@ import {
     expressionStatement,
     Identifier,
     identifier,
+    isValidIdentifier,
     memberExpression,
     objectExpression,
     objectPattern,
@@ -63,19 +64,24 @@ function sortParameters(parameters: OpenApiParameter[]) {
 
 function generateUniqueName(source: string, postfixes: string[], usedNames: Record<string, true>) {
     let result = applyEntityNameCase(source, 'camelCase');
+    if (!result && isValidIdentifier(source)) {
+        result = source;
+    }
     if (!usedNames[result]) {
         return result;
     }
     for (const postfix of postfixes) {
         const result = applyEntityNameCase(`${source} ${postfix}`, 'camelCase');
-        if (!usedNames[result]) {
+        if (result && !usedNames[result]) {
             return result;
         }
     }
     let i = 0;
+    const baseName =
+        applyEntityNameCase(source, 'camelCase') || (isValidIdentifier(source) ? source : postfixes[0]) || 'param';
     while (usedNames[result]) {
         i++;
-        result = applyEntityNameCase(`${source} ${i}`, 'camelCase');
+        result = applyEntityNameCase(`${baseName} ${i}`, 'camelCase');
     }
     return result;
 }

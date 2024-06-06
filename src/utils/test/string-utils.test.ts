@@ -51,6 +51,7 @@ const camelCaseTestCases = {
     Hello1World11foo: 'hello1World11Foo',
     Hello1: 'hello1',
     hello1: 'hello1',
+    BaseV1ApiClient: 'baseV1ApiClient',
     h2w: 'h2W'
 };
 
