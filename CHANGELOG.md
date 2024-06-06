@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.4.6](https://github.com/mdevils/api-typescript-generator/compare/v2.4.5...v2.4.6) (2024-06-06)
+
+
+### Bug Fixes
+
+* parameter name generation ([0497887](https://github.com/mdevils/api-typescript-generator/commit/0497887f1adc7ec626c5aca2b241844bf6641c03))
+
 ### [2.4.5](https://github.com/mdevils/api-typescript-generator/compare/v2.4.4...v2.4.5) (2024-06-06)
 
 
