@@ -20,6 +20,7 @@ export function applyEntityNameCase(input: string, entityNameCase: EntityNameCas
     for (;;) {
         input = input
             .replace(/([a-z0-9])([A-Z][a-z]|[A-Z]{2,})/g, '$1 $2')
+            .replace(/([a-z][0-9]+)([a-z])/g, '$1 $2')
             .replace(/([A-Z]{2,}[0-9]*)([A-Z][a-z])/g, '$1 $2');
         if (input === before) {
             break;
@@ -28,9 +29,15 @@ export function applyEntityNameCase(input: string, entityNameCase: EntityNameCas
     }
 
     const bits = input
+        .replace(/([a-z])([A-Z])/g, '$1 $2')
         .split(/[^a-zA-Z0-9]+/)
         .map((bit) => bit.toLowerCase())
         .filter((bit) => Boolean(bit));
+
+    if (bits.length === 0) {
+        return '';
+    }
+
     if (entityNameCase === 'pascalCase') {
         return bits.map(ucFirst).join('');
     }
