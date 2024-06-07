@@ -203,6 +203,12 @@ export function mergeTypes(first: TSType, second: TSType): TSType {
 }
 
 function mergeTypeLiteralsIfPossible(first: TSTypeLiteral, second: TSTypeLiteral): TSTypeLiteral | null {
+    if (first.members.length === 0) {
+        return second;
+    }
+    if (second.members.length === 0) {
+        return first;
+    }
     const result = tsTypeLiteral([]);
     const firstProperties = getTypeProperties(first);
     if (Object.keys(firstProperties).length !== first.members.length) {
