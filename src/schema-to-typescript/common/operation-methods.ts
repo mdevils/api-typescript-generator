@@ -89,6 +89,7 @@ function generateUniqueName(source: string, postfixes: string[], usedNames: Reco
 interface OpenApiParameterFromArgument {
     paramName: string;
     argumentName: string;
+    destructuringName: string;
     defaultValue?: Expression;
     optional?: boolean;
     docs: string | null;
@@ -110,12 +111,21 @@ function renderParameter(parameter: OpenApiParameterFromArgument | OpenApiParame
     const {paramName} = parameter;
     const propertyName = objectPropertyKey(paramName);
     if (isOperationParameterFromArgument(parameter)) {
-        const {argumentName} = parameter;
-        return objectProperty(propertyName, identifier(argumentName), false, paramName === argumentName);
+        const {destructuringName} = parameter;
+        return objectProperty(propertyName, identifier(destructuringName), false, paramName === destructuringName);
     } else {
         const {value} = parameter;
         return objectProperty(propertyName, value, false, false);
     }
+}
+
+function generateDestructuringName(paramName: string, postfixes: string[], usedInputNames: Record<string, true>) {
+    let destructuringName = paramName;
+    if (!isValidIdentifier(destructuringName, true)) {
+        destructuringName = generateUniqueName(destructuringName, postfixes, usedInputNames);
+        usedInputNames[destructuringName] = true;
+    }
+    return destructuringName;
 }
 
 export function generateOperationMethods({
@@ -286,6 +296,11 @@ export function generateOperationMethods({
                     inputParameters[parameter.in].push({
                         paramName: parameter.name,
                         argumentName: parameterName,
+                        destructuringName: generateDestructuringName(
+                            parameterName,
+                            [parameter.in, `${parameter.in} param`],
+                            usedInputNames
+                        ),
                         optional: !parameter.required,
                         type: extendDependenciesAndGetResult(
                             generateSchemaTypeAndImports({
@@ -469,12 +484,14 @@ export function generateOperationMethods({
                     inputParameters['header'].push({
                         paramName: 'Content-Type',
                         argumentName: mediaTypeName,
+                        destructuringName: generateDestructuringName(mediaTypeName, [], usedInputNames),
                         docs: null,
                         defaultValue: defaultMediaType ? stringLiteral(defaultMediaType) : undefined
                     });
                     for (const requestBodyName of allRequestBodyNames) {
                         inputParameters['body'].push({
                             argumentName: requestBodyName,
+                            destructuringName: generateDestructuringName(requestBodyName, [], usedInputNames),
                             paramName: requestBodyName,
                             docs: null
                         });
@@ -488,6 +505,7 @@ export function generateOperationMethods({
                         inputParameters['header'].push({
                             paramName: 'Content-Type',
                             argumentName: mediaTypeName,
+                            destructuringName: generateDestructuringName(mediaTypeName, [], usedInputNames),
                             docs: null,
                             type: tsStringKeyword()
                         });
@@ -500,6 +518,7 @@ export function generateOperationMethods({
                     inputParameters['body'].push({
                         paramName: requestBodyName,
                         argumentName: requestBodyName,
+                        destructuringName: generateDestructuringName(requestBodyName, [], usedInputNames),
                         type: extendDependenciesAndGetResult(
                             generateSchemaTypeAndImports({
                                 schema,
@@ -556,17 +575,19 @@ export function generateOperationMethods({
 
             const argument = objectPattern([]);
             const argumentType = tsTypeLiteral([]);
-            for (const {argumentName, type, optional, docs, defaultValue} of Object.values(inputParameters)
+            for (const {argumentName, destructuringName, type, optional, docs, defaultValue} of Object.values(
+                inputParameters
+            )
                 .flatMap((params) => params)
                 .filter(isOperationParameterFromArgument)) {
                 argument.properties.push(
                     objectProperty(
                         identifier(argumentName),
                         defaultValue
-                            ? assignmentPattern(identifier(argumentName), defaultValue)
-                            : identifier(argumentName),
+                            ? assignmentPattern(identifier(destructuringName), defaultValue)
+                            : identifier(destructuringName),
                         false,
-                        true
+                        argumentName === destructuringName
                     )
                 );
                 if (type) {
