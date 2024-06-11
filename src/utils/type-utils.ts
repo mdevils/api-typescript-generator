@@ -3,8 +3,11 @@ import {
     isIdentifier,
     isNumericLiteral,
     isStringLiteral,
+    isTSCallSignatureDeclaration,
+    isTSConstructSignatureDeclaration,
     isTSIntersectionType,
     isTSLiteralType,
+    isTSMethodSignature,
     isTSPropertySignature,
     isTSTypeLiteral,
     isTSUnionType,
@@ -272,4 +275,22 @@ export function simplifyIntersectionTypeIfPossible(intersection: TSIntersectionT
         return result;
     }
     return intersection;
+}
+
+export function isAssignableToEmptyObject(type: TSType): boolean {
+    if (isTSTypeLiteral(type)) {
+        for (const member of type.members) {
+            if (isTSCallSignatureDeclaration(member) || isTSConstructSignatureDeclaration(member)) {
+                return false;
+            } else if ((isTSMethodSignature(member) || isTSPropertySignature(member)) && !member.optional) {
+                return false;
+            }
+        }
+        return true;
+    } else if (isTSIntersectionType(type)) {
+        return type.types.every(isAssignableToEmptyObject);
+    } else if (isTSUnionType(type)) {
+        return type.types.some(isAssignableToEmptyObject);
+    }
+    return false;
 }

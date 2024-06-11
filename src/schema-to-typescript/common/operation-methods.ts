@@ -44,7 +44,7 @@ import {
 import {attachJsDocComment, extractJsDoc, JsDocRenderConfig, renderJsDoc} from '../../utils/jsdoc';
 import {isJsonMediaType, isWildcardMediaType} from '../../utils/media-types';
 import {applyEntityNameCase} from '../../utils/string-utils';
-import {getUserFreiendlySchemaName, mergeTypes} from '../../utils/type-utils';
+import {getUserFreiendlySchemaName, isAssignableToEmptyObject, mergeTypes} from '../../utils/type-utils';
 import {objectPropertyKey, valueToAstExpression} from '../common';
 import {
     OpenApiClientCustomizableBinaryType,
@@ -620,7 +620,13 @@ export function generateOperationMethods({
             const operationMethod = classMethod(
                 'method',
                 identifier(operationName),
-                argument.properties.length > 0 ? [argument] : [],
+                argument.properties.length > 0
+                    ? [
+                          isAssignableToEmptyObject(argument.typeAnnotation.typeAnnotation)
+                              ? assignmentPattern(argument, objectExpression([]))
+                              : argument
+                      ]
+                    : [],
                 blockStatement([
                     returnStatement(
                         operationReturn.wrapResultExpression(
