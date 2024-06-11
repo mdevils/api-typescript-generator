@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.4.9](https://github.com/mdevils/api-typescript-generator/compare/v2.4.8...v2.4.9) (2024-06-11)
+
+
+### Bug Fixes
+
+* default to empty object when all operation arguments are optional ([6421141](https://github.com/mdevils/api-typescript-generator/commit/6421141cecb16887e1566c647b7581ac96e48d65))
+
 ### [2.4.8](https://github.com/mdevils/api-typescript-generator/compare/v2.4.7...v2.4.8) (2024-06-07)
 
 
