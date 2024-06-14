@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.4.10](https://github.com/mdevils/api-typescript-generator/compare/v2.4.9...v2.4.10) (2024-06-14)
+
+
+### Bug Fixes
+
+* allow using unbound service methods ([dbf68d9](https://github.com/mdevils/api-typescript-generator/commit/dbf68d9ea0c3afc23ab27268fb72d5282b7cc487))
+
 ### [2.4.9](https://github.com/mdevils/api-typescript-generator/compare/v2.4.8...v2.4.9) (2024-06-11)
 
 
