@@ -1,10 +1,11 @@
 import {
     arrayExpression,
+    arrowFunctionExpression,
     assignmentPattern,
     blockStatement,
     callExpression,
-    classMethod,
-    ClassMethod,
+    ClassProperty,
+    classProperty,
     Expression,
     expressionStatement,
     Identifier,
@@ -166,7 +167,7 @@ export function generateOperationMethods({
         extendDependenciesAndGetResult(generateBinaryType(binaryTypes, operationImportPath), dependencyImports);
 
     const modelRegisterValidationSchemaImports: Record<string, true> = {};
-    const methods: ClassMethod[] = [];
+    const methodProperties: ClassProperty[] = [];
     const validationStatements: Statement[] = [];
 
     if (validateResponse && !validationContext) {
@@ -617,9 +618,7 @@ export function generateOperationMethods({
                 );
             }
 
-            const operationMethod = classMethod(
-                'method',
-                identifier(operationName),
+            const operationMethod = arrowFunctionExpression(
                 argument.properties.length > 0
                     ? [
                           isAssignableToEmptyObject(argument.typeAnnotation.typeAnnotation)
@@ -644,11 +643,12 @@ export function generateOperationMethods({
                     )
                 ])
             );
+            const operationMethodProperty = classProperty(identifier(operationName), operationMethod);
             operationMethod.returnType = tsTypeAnnotation(
                 tsTypeReference(identifier('Promise'), tsTypeParameterInstantiation([operationReturn.type]))
             );
             extendDependencyImports(dependencyImports, operationReturn.dependencyImports);
-            methods.push(attachJsDocComment(operationMethod, renderJsDoc(jsdoc, jsDocRenderConfig)));
+            methodProperties.push(attachJsDocComment(operationMethodProperty, renderJsDoc(jsdoc, jsDocRenderConfig)));
         }
     }
     if (Object.keys(modelRegisterValidationSchemaImports).length > 0 && validationContext) {
@@ -671,7 +671,7 @@ export function generateOperationMethods({
         );
     }
 
-    methods.sort((a, b) => (a.key as Identifier).name.localeCompare((b.key as Identifier).name));
+    methodProperties.sort((a, b) => (a.key as Identifier).name.localeCompare((b.key as Identifier).name));
 
-    return {methods, dependencyImports, validationStatements};
+    return {methods: methodProperties, dependencyImports, validationStatements};
 }
