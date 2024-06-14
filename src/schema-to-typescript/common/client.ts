@@ -18,6 +18,7 @@ import {
     objectExpression,
     objectProperty,
     program,
+    returnStatement,
     spreadElement,
     Statement,
     stringLiteral,
@@ -166,9 +167,17 @@ export function generateClient({
             });
             clientClassBody.body.push(
                 attachJsDocComment(
-                    classProperty(
+                    classMethod(
+                        'get',
                         identifier(applyEntityNameCase(tag, 'camelCase')),
-                        newExpression(identifier(name), [memberExpression(thisExpression(), identifier('getClient'))])
+                        [],
+                        blockStatement([
+                            returnStatement(
+                                callExpression(memberExpression(thisExpression(), identifier('getServiceInstance')), [
+                                    identifier(name)
+                                ])
+                            )
+                        ])
                     ),
                     renderJsDoc(jsdoc, jsDocRenderConfig)
                 )
@@ -246,14 +255,6 @@ export function generateClient({
                     )
                 )
             ])
-        ),
-        classProperty(
-            identifier('createClientWithServices'),
-            memberExpression(identifier(commonHttpClientImportName), identifier('createClientWithServices')),
-            null,
-            null,
-            false,
-            true
         )
     );
 

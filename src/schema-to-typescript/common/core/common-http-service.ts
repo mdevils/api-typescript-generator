@@ -1,6 +1,22 @@
 import * as commonHttpClient from './common-http-client';
 
 export class CommonHttpService {
+    protected serviceInstancesMap: Map<
+        new (getClientInstance: () => commonHttpClient.CommonHttpClient) => CommonHttpService,
+        CommonHttpService
+    > = new Map();
+
+    protected getServiceInstance<T extends CommonHttpService>(
+        serviceClass: new (getClientInstance: () => commonHttpClient.CommonHttpClient) => T
+    ): T {
+        let serviceInstance = this.serviceInstancesMap.get(serviceClass);
+        if (!serviceInstance) {
+            serviceInstance = new serviceClass(this.getClientInstance);
+            this.serviceInstancesMap.set(serviceClass, serviceInstance);
+        }
+        return serviceInstance as T;
+    }
+
     protected getClientInstance: () => commonHttpClient.CommonHttpClient;
     constructor(getClientInstance: () => commonHttpClient.CommonHttpClient) {
         this.getClientInstance = () => {
