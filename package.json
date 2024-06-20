@@ -13,7 +13,6 @@
     "openapi.d.ts",
     "openapi-client.d.ts",
     "lib",
-    "src",
     "docs",
     "LICENSE",
     "README.md"
