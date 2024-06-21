@@ -512,6 +512,28 @@ export type GenerateClientJsDoc = (params: {
 }) => JsDocBlock;
 
 /**
+ * Callback for generating the JSDoc of a client.
+ *
+ * @example
+ *     function generateClientErrorJsDoc({suggestedJsDoc, info}) {
+ *         return {
+ *             ...suggestedJsDoc,
+ *             title: 'Error Class for ' + info.summary
+ *         };
+ *     }
+ */
+export type GenerateClientErrorJsDoc = (params: {
+    /**
+     * Suggested JSDoc block. Used by default if the callback is not specified.
+     */
+    suggestedJsDoc: JsDocBlock;
+    /**
+     * OpenAPI Info Object.
+     */
+    info: OpenApiInfo;
+}) => JsDocBlock;
+
+/**
  * What needs to be imported from the external source.
  */
 export type OpenApiClientExternalValueSourceImportEntity = {name: string} | 'default';
@@ -716,9 +738,19 @@ export interface OpenApiClientGeneratorConfigClient {
      */
     exportErrorClass?: boolean;
     /**
+     * Whether to export the client constructor options type.
+     *
+     * @default true
+     */
+    exportOptionsType?: boolean;
+    /**
      * Client JSDoc generation callback.
      */
     generateJsDoc?: GenerateClientJsDoc;
+    /**
+     * Client error class JSDoc generation callback.
+     */
+    generateErrorJsDoc?: GenerateClientErrorJsDoc;
 }
 
 /**

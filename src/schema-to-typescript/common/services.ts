@@ -16,6 +16,7 @@ import {
 import {GetModelData} from './models';
 import {generateOperationMethods} from './operation-methods';
 import {openApiHttpMethods, OpenApiPaths, OpenApiTag} from '../../schemas/openapi';
+import {makeProtected} from '../../utils/ast';
 import {generateTsImports} from '../../utils/dependencies';
 import {attachJsDocComment, JsDocBlock, JsDocRenderConfig, renderJsDoc} from '../../utils/jsdoc';
 import {getRelativeImportPath} from '../../utils/paths';
@@ -142,13 +143,15 @@ export function generateServices({
 
         if (serviceMethods.validationStatements.length > 0) {
             serviceClassBody.body.push(
-                classMethod(
-                    'method',
-                    identifier('initialize'),
-                    [],
-                    blockStatement(serviceMethods.validationStatements),
-                    false,
-                    true
+                makeProtected(
+                    classMethod(
+                        'method',
+                        identifier('initialize'),
+                        [],
+                        blockStatement(serviceMethods.validationStatements),
+                        false,
+                        true
+                    )
                 )
             );
         }

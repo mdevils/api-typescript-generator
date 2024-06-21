@@ -8,6 +8,7 @@ import {
     Identifier,
     identifier,
     isValidIdentifier,
+    Noop,
     nullLiteral,
     NumericLiteral,
     numericLiteral,
@@ -34,7 +35,8 @@ import {
     tsTypeLiteral,
     tsTypeReference,
     tsUnionType,
-    tsUnknownKeyword
+    tsUnknownKeyword,
+    TypeAnnotation
 } from '@babel/types';
 import {OpenApiClientGeneratorConfig} from './openapi-to-typescript-client';
 import {
@@ -317,7 +319,10 @@ export function isNamedSchema(schema: OpenApiSchema): schema is OpenApiExpandedS
     return typeof schema !== 'boolean' && schema.name !== undefined;
 }
 
-export function attachTypeAnnotation(node: Identifier, typeAnnotation: TSTypeAnnotation): Identifier {
+export function attachTypeAnnotation<T extends {typeAnnotation?: TypeAnnotation | TSTypeAnnotation | Noop | null}>(
+    node: T,
+    typeAnnotation: TSTypeAnnotation
+): T {
     node.typeAnnotation = typeAnnotation;
     return node;
 }

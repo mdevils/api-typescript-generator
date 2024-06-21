@@ -14,9 +14,11 @@ Configuration for generating the client.
 - [errorClassName](openapi_client.OpenApiClientGeneratorConfigClient.md#errorclassname)
 - [exportErrorClass](openapi_client.OpenApiClientGeneratorConfigClient.md#exporterrorclass)
 - [exportModels](openapi_client.OpenApiClientGeneratorConfigClient.md#exportmodels)
+- [exportOptionsType](openapi_client.OpenApiClientGeneratorConfigClient.md#exportoptionstype)
 - [exportServices](openapi_client.OpenApiClientGeneratorConfigClient.md#exportservices)
 - [filename](openapi_client.OpenApiClientGeneratorConfigClient.md#filename)
 - [filenameFormat](openapi_client.OpenApiClientGeneratorConfigClient.md#filenameformat)
+- [generateErrorJsDoc](openapi_client.OpenApiClientGeneratorConfigClient.md#generateerrorjsdoc)
 - [generateJsDoc](openapi_client.OpenApiClientGeneratorConfigClient.md#generatejsdoc)
 - [includeServices](openapi_client.OpenApiClientGeneratorConfigClient.md#includeservices)
 - [name](openapi_client.OpenApiClientGeneratorConfigClient.md#name)
@@ -69,6 +71,20 @@ Whether to export models from the client file.
 
 ___
 
+### exportOptionsType
+
+• `Optional` **exportOptionsType**: `boolean`
+
+Whether to export the client constructor options type.
+
+**`Default`**
+
+```ts
+true
+```
+
+___
+
 ### exportServices
 
 • `Optional` **exportServices**: ``"all"`` \| ``"none"`` \| \{ `services`: `string`[]  }
@@ -102,6 +118,14 @@ Filename format for the client class. Ignored if `filename` is set.
 ```ts
 {filenameCase: 'kebabCase'}
 ```
+
+___
+
+### generateErrorJsDoc
+
+• `Optional` **generateErrorJsDoc**: `GenerateClientErrorJsDoc`
+
+Client error class JSDoc generation callback.
 
 ___
 

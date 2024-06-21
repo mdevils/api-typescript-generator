@@ -34,6 +34,7 @@ import {generateOperationMethods} from './operation-methods';
 import {GeneratedServicesImportInfo} from './services';
 import {OpenApiInfo, OpenApiServer} from '../../schemas/common';
 import {OpenApiPaths} from '../../schemas/openapi';
+import {makeProtected} from '../../utils/ast';
 import {
     addDependencyImport,
     DependencyImports,
@@ -67,8 +68,10 @@ export function generateClient({
         exportModels,
         exportServices,
         exportErrorClass,
+        exportOptionsType,
         errorClassName,
         generateJsDoc,
+        generateErrorJsDoc,
         ...filenameConfig
     },
     generatedServiceImports,
@@ -107,11 +110,6 @@ export function generateClient({
     const clientPropertyName = 'client';
     const commonHttpClientImportName = 'commonHttpClient';
     const {importPath: clientImportPath, filename} = getFilenameAndImportPath(name, filenameConfig);
-    const clientProperty = classProperty(identifier(clientPropertyName));
-    clientProperty.typeAnnotation = tsTypeAnnotation(
-        tsTypeReference(tsQualifiedName(identifier(commonHttpClientImportName), identifier(commonHttpClientClassName)))
-    );
-
     const errorTypeName = errorClassName ?? `${name}Error`;
     const additionalTypeStatements: Statement[] = [];
     const errorClassDeclaration = classDeclaration(
@@ -119,29 +117,40 @@ export function generateClient({
         memberExpression(identifier(commonHttpClientImportName), identifier(commonHttpClientErrorClassName)),
         classBody([classProperty(identifier('name'), stringLiteral(errorTypeName))])
     );
-    if (exportErrorClass !== false) {
-        additionalTypeStatements.push(exportNamedDeclaration(errorClassDeclaration));
-    } else {
-        additionalTypeStatements.push(errorClassDeclaration);
-    }
+    const errorClassSuggestedJsDoc: JsDocBlock = {title: `Error class for ${info.summary}`, tags: []};
+    additionalTypeStatements.push(
+        attachJsDocComment(
+            exportErrorClass !== false ? exportNamedDeclaration(errorClassDeclaration) : errorClassDeclaration,
+            renderJsDoc(
+                generateErrorJsDoc
+                    ? generateErrorJsDoc({suggestedJsDoc: errorClassSuggestedJsDoc, info})
+                    : errorClassSuggestedJsDoc,
+                jsDocRenderConfig
+            )
+        )
+    );
 
     const clientClassBody = classBody([
-        classProperty(
-            identifier(clientPropertyName),
-            newExpression(
-                memberExpression(identifier(commonHttpClientImportName), identifier(commonHttpClientClassName)),
-                [
-                    objectExpression([
-                        objectProperty(identifier('baseUrl'), stringLiteral(servers[0]?.url ?? defaultServerUrl)),
-                        objectProperty(identifier('binaryResponseType'), stringLiteral(responseBinaryType)),
-                        objectProperty(identifier('errorClass'), identifier(errorTypeName))
-                    ])
-                ]
+        makeProtected(
+            classProperty(
+                identifier(clientPropertyName),
+                newExpression(
+                    memberExpression(identifier(commonHttpClientImportName), identifier(commonHttpClientClassName)),
+                    [
+                        objectExpression([
+                            objectProperty(identifier('baseUrl'), stringLiteral(servers[0]?.url ?? defaultServerUrl)),
+                            objectProperty(identifier('binaryResponseType'), stringLiteral(responseBinaryType)),
+                            objectProperty(identifier('errorClass'), identifier(errorTypeName))
+                        ])
+                    ]
+                )
             )
         ),
-        classProperty(
-            identifier('getClient'),
-            arrowFunctionExpression([], memberExpression(thisExpression(), identifier(clientPropertyName)))
+        makeProtected(
+            classProperty(
+                identifier('getClient'),
+                arrowFunctionExpression([], memberExpression(thisExpression(), identifier(clientPropertyName)))
+            )
         )
     ]);
     const dependencyImports: DependencyImports = {};
@@ -186,23 +195,23 @@ export function generateClient({
     }
 
     const optionsTypeName = `${name}Options`;
-    const optionsTypeExport = exportNamedDeclaration(
-        tsTypeAliasDeclaration(
-            identifier(optionsTypeName),
-            null,
-            tsTypeReference(
-                identifier('Partial'),
-                tsTypeParameterInstantiation([
-                    tsTypeReference(
-                        tsQualifiedName(
-                            identifier(commonHttpClientImportName),
-                            identifier(commonHttpClientClassOptionsName)
-                        )
+    const optionsTypeDeclaration = tsTypeAliasDeclaration(
+        identifier(optionsTypeName),
+        null,
+        tsTypeReference(
+            identifier('Partial'),
+            tsTypeParameterInstantiation([
+                tsTypeReference(
+                    tsQualifiedName(
+                        identifier(commonHttpClientImportName),
+                        identifier(commonHttpClientClassOptionsName)
                     )
-                ])
-            )
+                )
+            ])
         )
     );
+    const optionsTypeStatement =
+        exportOptionsType === false ? optionsTypeDeclaration : exportNamedDeclaration(optionsTypeDeclaration);
 
     const generatedMethods = generateOperationMethods({
         paths,
@@ -260,13 +269,15 @@ export function generateClient({
 
     if (generatedMethods.validationStatements.length > 0) {
         clientClassBody.body.push(
-            classMethod(
-                'method',
-                identifier('initialize'),
-                [],
-                blockStatement(generatedMethods.validationStatements),
-                false,
-                true
+            makeProtected(
+                classMethod(
+                    'method',
+                    identifier('initialize'),
+                    [],
+                    blockStatement(generatedMethods.validationStatements),
+                    false,
+                    true
+                )
             )
         );
     }
@@ -350,7 +361,7 @@ export function generateClient({
                     stringLiteral(getRelativeImportPath(clientImportPath, commonHttpClientImportPath))
                 ),
                 ...generateTsImports(dependencyImports),
-                optionsTypeExport,
+                optionsTypeStatement,
                 ...additionalTypeStatements,
                 clientClass,
                 ...otherStatements,
