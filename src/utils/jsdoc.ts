@@ -95,10 +95,11 @@ function renderJsDocTagAsPlainText(tag: JsDocBlockTag): string {
 
     if (tag.value) {
         if (tag.name === 'example') {
-            if (tag.value.match(/^[\n\r \t]/)) {
-                result += `:${tag.value}`;
+            const value = tag.value.replace(/[\n]?$/g, '\n');
+            if (value.match(/^[\n]/)) {
+                result += `:\n\`\`\`${value}\`\`\``;
             } else {
-                result += `:${tag.value.replace(/^([^\n]+)\n/, ' "$1":\n```')}\`\`\``;
+                result += `:${value.replace(/^([^\n]+)\n/, ' "$1":\n```')}\`\`\``;
             }
         } else {
             result += ':';
