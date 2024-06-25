@@ -123,7 +123,7 @@ ___
 
 ### generateErrorJsDoc
 
-• `Optional` **generateErrorJsDoc**: `GenerateClientErrorJsDoc`
+• `Optional` **generateErrorJsDoc**: [`GenerateClientErrorJsDoc`](../modules/openapi_client.md#generateclienterrorjsdoc)
 
 Client error class JSDoc generation callback.
 

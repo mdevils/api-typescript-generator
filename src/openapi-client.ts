@@ -12,6 +12,7 @@ export type {
     GenerateOperationResultDescription,
     GenerateServiceJsDoc,
     GenerateClientJsDoc,
+    GenerateClientErrorJsDoc,
     OpenApiClientBuiltinBinaryType,
     OpenApiClientCustomizableBinaryType,
     OpenApiClientExternalType,

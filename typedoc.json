@@ -1,0 +1,14 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "plugin": [
+    "typedoc-plugin-markdown"
+  ],
+  "entryPoints": ["src/index.ts", "src/openapi.ts", "src/openapi-client.ts"],
+  "exclude": ["test"],
+  "excludeExternals": true,
+  "excludeInternal": true,
+  "disableSources": true,
+  "entryDocument": "../README.md",
+  "out": "docs",
+  "treatWarningsAsErrors": true
+}

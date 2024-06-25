@@ -36,6 +36,7 @@
 - [CommonHttpClientFetchResponseBody](openapi_client.md#commonhttpclientfetchresponsebody)
 - [CommonHttpClientRequest](openapi_client.md#commonhttpclientrequest)
 - [CommonHttpClientResponseHeaders](openapi_client.md#commonhttpclientresponseheaders)
+- [GenerateClientErrorJsDoc](openapi_client.md#generateclienterrorjsdoc)
 - [GenerateClientJsDoc](openapi_client.md#generateclientjsdoc)
 - [GenerateModelJsDoc](openapi_client.md#generatemodeljsdoc)
 - [GenerateModelNameCallback](openapi_client.md#generatemodelnamecallback)
@@ -71,6 +72,41 @@ ___
 ### CommonHttpClientResponseHeaders
 
 Ƭ **CommonHttpClientResponseHeaders**: `Record`\<`string`, `string`\> & \{ `set-cookie?`: `string`[]  }
+
+___
+
+### GenerateClientErrorJsDoc
+
+Ƭ **GenerateClientErrorJsDoc**: (`params`: \{ `info`: [`OpenApiInfo`](../interfaces/openapi.OpenApiInfo.md) ; `suggestedJsDoc`: [`JsDocBlock`](../interfaces/index.JsDocBlock.md)  }) => [`JsDocBlock`](../interfaces/index.JsDocBlock.md)
+
+#### Type declaration
+
+▸ (`params`): [`JsDocBlock`](../interfaces/index.JsDocBlock.md)
+
+Callback for generating the JSDoc of a client.
+
+##### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `params` | `Object` | - |
+| `params.info` | [`OpenApiInfo`](../interfaces/openapi.OpenApiInfo.md) | OpenAPI Info Object. |
+| `params.suggestedJsDoc` | [`JsDocBlock`](../interfaces/index.JsDocBlock.md) | Suggested JSDoc block. Used by default if the callback is not specified. |
+
+##### Returns
+
+[`JsDocBlock`](../interfaces/index.JsDocBlock.md)
+
+**`Example`**
+
+```ts
+function generateClientErrorJsDoc({suggestedJsDoc, info}) {
+        return {
+            ...suggestedJsDoc,
+            title: 'Error Class for ' + info.summary
+        };
+    }
+```
 
 ___
 
