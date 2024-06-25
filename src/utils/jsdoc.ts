@@ -69,7 +69,7 @@ export function extractJsDoc(entity: AnnotatedApiEntity | boolean): JsDocBlock {
         result.tags.push({name: 'deprecated'});
     }
     if (entity.example !== undefined) {
-        result.tags.push({name: 'example', value: exampleToString(entity.example)});
+        result.tags.push({name: 'example', value: '\n' + exampleToString(entity.example).trim()});
     }
     if (entity.examples !== undefined) {
         for (const [exampleName, example] of Object.entries(entity.examples)) {
@@ -79,7 +79,7 @@ export function extractJsDoc(entity: AnnotatedApiEntity | boolean): JsDocBlock {
             }
             result.tags.push({
                 name: 'example',
-                value: `${exampleInfo.length > 0 ? ` ${exampleInfo.join('. ')}` : ''} ${exampleToString(example.value)}`
+                value: `${exampleInfo.length > 0 ? ` ${exampleInfo.join('. ')}` : ''}\n${exampleToString(example.value)}`
             });
         }
     }
@@ -113,6 +113,19 @@ const defaultWordWrapLineWidth = 80;
 
 export type JsDocRenderConfig = OpenApiClientGeneratorConfig['jsDoc'];
 
+function renderJsDocTag(tag: JsDocBlockTag): string {
+    let result = `@${tag.name}`;
+
+    if (tag.value) {
+        if (!tag.value.match(/^[\n\r \t]/)) {
+            result += ' ';
+        }
+        result += tag.value;
+    }
+
+    return result;
+}
+
 export function renderJsDoc(jsdoc: JsDocBlock, config: JsDocRenderConfig = {}): string | null {
     function processText(text: string) {
         if (config?.wordWrap !== false) {
@@ -131,9 +144,7 @@ export function renderJsDoc(jsdoc: JsDocBlock, config: JsDocRenderConfig = {}): 
         jsdocParts.push(processText(description));
     }
     if (jsdoc.tags.length > 0) {
-        jsdocParts.push(
-            jsdoc.tags.map(({name, value}) => `@${name}${value ? ` ${processText(value.trim())}` : ''}`).join('\n')
-        );
+        jsdocParts.push(jsdoc.tags.map(renderJsDocTag).join('\n'));
     }
     if (jsdocParts.length === 0) {
         return null;
