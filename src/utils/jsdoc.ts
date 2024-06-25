@@ -90,6 +90,28 @@ export function renderJsDocList(items: string[]): string {
     return items.map((item) => ` * ${item.trim().replace(/\n/g, '\n   ')}`).join('\n\n');
 }
 
+function renderJsDocTagAsPlainText(tag: JsDocBlockTag): string {
+    let result = `${tag.name}`;
+
+    if (tag.value) {
+        if (tag.name === 'example') {
+            if (tag.value.match(/^[\n\r \t]/)) {
+                result += `:${tag.value}`;
+            } else {
+                result += `:${tag.value.replace(/^([^\n]+)\n/, ' "$1":\n```')}\`\`\``;
+            }
+        } else {
+            result += ':';
+            if (!tag.value.match(/^[\n\r \t]/)) {
+                result += ' ';
+            }
+            result += tag.value;
+        }
+    }
+
+    return result;
+}
+
 export function renderJsDocAsPlainText(jsdoc: JsDocBlock): string | null {
     const bits: string[] = [];
     const title = jsdoc.title && jsdoc.title.trim();
@@ -101,7 +123,7 @@ export function renderJsDocAsPlainText(jsdoc: JsDocBlock): string | null {
         bits.push(description);
     }
     if (jsdoc.tags.length > 0) {
-        bits.push(jsdoc.tags.map(({name, value}) => `${name}${value ? `: ${value.trim()}` : ''}`).join('\n'));
+        bits.push(jsdoc.tags.map(renderJsDocTagAsPlainText).join('\n'));
     }
     if (bits.length === 0) {
         return null;
