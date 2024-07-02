@@ -24,7 +24,7 @@ export default async function (): Promise<ApiTypescriptGeneratorConfig> {
                     library: 'zod'
                 },
                 postprocess: {
-                    eslint: false
+                    eslint: true
                 },
                 core: {
                     cleanupFiles: true,
