@@ -4,6 +4,8 @@
 
 [openapi-client](../modules/openapi_client.md).CommonHttpClientError
 
+Error thrown by the common HTTP client.
+
 ## Hierarchy
 
 - `Error`
@@ -49,11 +51,15 @@ Error.constructor
 
 • `Readonly` **options**: `undefined` \| [`CommonHttpClientOptions`](../interfaces/openapi_client.CommonHttpClientOptions.md)
 
+Options of the common HTTP client.
+
 ___
 
 ### request
 
 • `Readonly` **request**: `undefined` \| [`CommonHttpClientFetchRequest`](../interfaces/openapi_client.CommonHttpClientFetchRequest.md)
+
+Request that caused the error. Can be undefined in case of failure during request building phase.
 
 ___
 
@@ -61,8 +67,12 @@ ___
 
 • `Readonly` **response**: `undefined` \| [`CommonHttpClientFetchResponse`](../interfaces/openapi_client.CommonHttpClientFetchResponse.md)
 
+Response that caused the error. Can be undefined in case of network failure.
+
 ___
 
 ### url
 
 • `Readonly` **url**: `URL`
+
+URL of the request.

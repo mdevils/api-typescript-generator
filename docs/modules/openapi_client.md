@@ -38,6 +38,7 @@
 - [CommonHttpClientResponseHeaders](openapi_client.md#commonhttpclientresponseheaders)
 - [GenerateClientErrorJsDoc](openapi_client.md#generateclienterrorjsdoc)
 - [GenerateClientJsDoc](openapi_client.md#generateclientjsdoc)
+- [GenerateCoreJsDoc](openapi_client.md#generatecorejsdoc)
 - [GenerateModelJsDoc](openapi_client.md#generatemodeljsdoc)
 - [GenerateModelNameCallback](openapi_client.md#generatemodelnamecallback)
 - [GenerateOperationJsDoc](openapi_client.md#generateoperationjsdoc)
@@ -140,6 +141,42 @@ function generateClientJsDoc({suggestedJsDoc, info}) {
             title: info.summary,
             description: info.description,
             tags: [{name: 'version', value: info.version}]
+        };
+    }
+```
+
+___
+
+### GenerateCoreJsDoc
+
+Ƭ **GenerateCoreJsDoc**: (`params`: \{ `memberName?`: `string` ; `suggestedJsDoc`: [`JsDocBlock`](../interfaces/index.JsDocBlock.md) ; `typeName`: `string`  }) => [`JsDocBlock`](../interfaces/index.JsDocBlock.md)
+
+#### Type declaration
+
+▸ (`params`): [`JsDocBlock`](../interfaces/index.JsDocBlock.md)
+
+Callback for generating the JSDoc for core classes.
+
+##### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `params` | `Object` | - |
+| `params.memberName?` | `string` | Name of the member of the core class. Empty if the JSDoc is for the class itself. |
+| `params.suggestedJsDoc` | [`JsDocBlock`](../interfaces/index.JsDocBlock.md) | Suggested JSDoc block. Used by default if the callback is not specified. |
+| `params.typeName` | `string` | Name of the core class. |
+
+##### Returns
+
+[`JsDocBlock`](../interfaces/index.JsDocBlock.md)
+
+**`Example`**
+
+```ts
+function GenerateCoreJsDoc({suggestedJsDoc}) {
+        return {
+            ...suggestedJsDoc,
+            tags: [...suggestedJsDoc.tags, {name: 'internal'}]
         };
     }
 ```

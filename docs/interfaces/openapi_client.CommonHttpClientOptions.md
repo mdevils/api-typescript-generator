@@ -4,6 +4,8 @@
 
 [openapi-client](../modules/openapi_client.md).CommonHttpClientOptions
 
+Options for the common HTTP client.
+
 ## Table of contents
 
 ### Properties
@@ -23,11 +25,15 @@
 
 • **baseUrl**: `string`
 
+Base URL for the API. Endpoints are relative to this URL.
+
 ___
 
 ### binaryResponseType
 
 • **binaryResponseType**: ``"blob"`` \| ``"readableStream"``
+
+Type of the response body for binary responses.
 
 ___
 
@@ -38,6 +44,8 @@ ___
 #### Type declaration
 
 • **new errorClass**(`url`, `request`, `response`, `options`, `message`)
+
+Error class to be thrown when an error occurs.
 
 ##### Parameters
 
@@ -58,6 +66,8 @@ ___
 #### Type declaration
 
 ▸ (`url`, `request`): `Promise`\<[`CommonHttpClientFetchResponse`](openapi_client.CommonHttpClientFetchResponse.md)\>
+
+Fetch function. Default is window.fetch-based implementation.
 
 ##### Parameters
 
@@ -80,6 +90,8 @@ ___
 
 ▸ (`response`, `request`): `string`
 
+Format the HTTP error message.
+
 ##### Parameters
 
 | Name | Type |
@@ -97,6 +109,8 @@ ___
 
 • `Optional` **headers**: [`CommonHttpClientRequestHeaders`](openapi_client.CommonHttpClientRequestHeaders.md)
 
+Default headers to be sent with each request.
+
 ___
 
 ### preprocessFetchResponse
@@ -106,6 +120,8 @@ ___
 #### Type declaration
 
 ▸ (`response`, `request`): `Promise`\<[`CommonHttpClientFetchResponse`](openapi_client.CommonHttpClientFetchResponse.md)\>
+
+Preprocess the response before returning it.
 
 ##### Parameters
 
@@ -127,6 +143,8 @@ ___
 #### Type declaration
 
 ▸ (`request`): `Promise`\<[`CommonHttpClientRequest`](../modules/openapi_client.md#commonhttpclientrequest)\>
+
+Preprocess the request before sending it.
 
 ##### Parameters
 

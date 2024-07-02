@@ -12,6 +12,7 @@ Configuration for the core classes.
 
 - [cleanupFiles](openapi_client.OpenApiClientGeneratorConfigCore.md#cleanupfiles)
 - [filenameFormat](openapi_client.OpenApiClientGeneratorConfigCore.md#filenameformat)
+- [generateJsDoc](openapi_client.OpenApiClientGeneratorConfigCore.md#generatejsdoc)
 - [relativeDirPath](openapi_client.OpenApiClientGeneratorConfigCore.md#relativedirpath)
 
 ## Properties
@@ -42,6 +43,14 @@ Filename format for the core classes.
 ```ts
 {filenameCase: 'kebabCase'}
 ```
+
+___
+
+### generateJsDoc
+
+• `Optional` **generateJsDoc**: [`GenerateCoreJsDoc`](../modules/openapi_client.md#generatecorejsdoc)
+
+JSDoc generation callback for core classes / members.
 
 ___
 

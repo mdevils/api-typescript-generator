@@ -4,6 +4,8 @@
 
 [openapi-client](../modules/openapi_client.md).CommonHttpClientRequestHeaders
 
+A forgiving version of the request headers. Undefined and null values are allowed.
+
 ## Indexable
 
 ▪ [headerName: `string`]: `string` \| `undefined` \| ``null``

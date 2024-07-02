@@ -4,6 +4,8 @@
 
 [openapi-client](../modules/openapi_client.md).CommonHttpClientFetchRequestHeaders
 
+Request headers as used by the fetch function.
+
 ## Indexable
 
 ▪ [headerName: `string`]: `string`
