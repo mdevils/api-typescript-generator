@@ -534,6 +534,32 @@ export type GenerateClientErrorJsDoc = (params: {
 }) => JsDocBlock;
 
 /**
+ * Callback for generating the JSDoc for core classes.
+ *
+ * @example
+ *     function GenerateCoreJsDoc({suggestedJsDoc}) {
+ *         return {
+ *             ...suggestedJsDoc,
+ *             tags: [...suggestedJsDoc.tags, {name: 'internal'}]
+ *         };
+ *     }
+ */
+export type GenerateCoreJsDoc = (params: {
+    /**
+     * Suggested JSDoc block. Used by default if the callback is not specified.
+     */
+    suggestedJsDoc: JsDocBlock;
+    /**
+     * Name of the core class.
+     */
+    typeName: string;
+    /**
+     * Name of the member of the core class. Empty if the JSDoc is for the class itself.
+     */
+    memberName?: string;
+}) => JsDocBlock;
+
+/**
  * What needs to be imported from the external source.
  */
 export type OpenApiClientExternalValueSourceImportEntity = {name: string} | 'default';
@@ -853,6 +879,10 @@ export interface OpenApiClientGeneratorConfigCore {
      * @default false
      */
     cleanupFiles?: boolean;
+    /**
+     * JSDoc generation callback for core classes / members.
+     */
+    generateJsDoc?: GenerateCoreJsDoc;
 }
 
 /**

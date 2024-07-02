@@ -13,6 +13,7 @@ export type {
     GenerateServiceJsDoc,
     GenerateClientJsDoc,
     GenerateClientErrorJsDoc,
+    GenerateCoreJsDoc,
     OpenApiClientBuiltinBinaryType,
     OpenApiClientCustomizableBinaryType,
     OpenApiClientExternalType,

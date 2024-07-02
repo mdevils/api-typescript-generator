@@ -1,4 +1,4 @@
-import {addComment, Node} from '@babel/types';
+import {addComment, Node, Comment, isTSPropertySignature, removeComments} from '@babel/types';
 import {wordWrap} from './string-utils';
 import {AnnotatedApiEntity} from '../schema-to-typescript/common';
 import {OpenApiClientGeneratorConfig} from '../schema-to-typescript/openapi-to-typescript-client';
@@ -177,14 +177,17 @@ export function renderJsDoc(jsdoc: JsDocBlock, config: JsDocRenderConfig = {}): 
 
 export function attachJsDocComment<T extends Node>(node: T, jsdoc: string | null): T {
     if (jsdoc) {
+        removeComments(node);
         if (!jsdoc.match(/\n/)) {
             addComment(node, 'leading', `* ${jsdoc.replace(/\*\//g, '* /')} `, false);
-            node.leadingComments![0].loc = {
-                filename: '',
-                identifierName: undefined,
-                start: {line: 0, column: 0, index: 0},
-                end: {line: 1, column: 1, index: 1}
-            };
+            if (isTSPropertySignature(node)) {
+                node.leadingComments![0].loc = {
+                    filename: '',
+                    identifierName: undefined,
+                    start: {line: 0, column: 0, index: 0},
+                    end: {line: 1, column: 1, index: 1}
+                };
+            }
         } else {
             addComment(node, 'leading', `*\n * ${jsdoc.replace(/\*\//g, '* /').split('\n').join('\n * ')}\n `, false);
         }
@@ -196,4 +199,59 @@ export function extractJsDocString(entity: AnnotatedApiEntity | boolean, params:
     const jsdoc = extractJsDoc(entity);
     jsdoc.tags = jsdoc.tags.concat(params);
     return renderJsDoc(jsdoc);
+}
+
+export function isJsDocComment(node: Comment) {
+    return node.type === 'CommentBlock' && node.value.startsWith('*');
+}
+
+export function parseJsDoc(comment: string): JsDocBlock {
+    const lines = comment
+        .replace(/(?:\r\n|\r|\n|^)\s*\* ?/g, '\n')
+        .trim()
+        .split(/\n/);
+    const result: JsDocBlock = {tags: []};
+
+    while (lines.length > 0) {
+        const line = lines[0];
+        if (!line.trim() && result.title) {
+            break;
+        }
+        if (line.startsWith('@')) {
+            break;
+        }
+        result.title = result.title ? `${result.title}\n${line}` : line;
+        lines.shift();
+    }
+
+    while (lines.length > 0) {
+        const line = lines[0];
+        if (line.startsWith('@')) {
+            break;
+        }
+        result.description = result.description ? `${result.description}\n${line}` : line;
+        lines.shift();
+    }
+
+    let currentTag: JsDocBlockTag | null = null;
+    while (lines.length > 0) {
+        const line = lines.shift()!;
+        const match = line.match(/^@(\S+)\s*(.*)?$/);
+        if (match) {
+            const name = match[1];
+            const value = match[2] && match[2].trim();
+            currentTag = {
+                name,
+                value: value || undefined
+            };
+            result.tags.push(currentTag);
+        } else if (currentTag) {
+            currentTag.value = currentTag.value ? `${currentTag.value}\n${line}` : line;
+        } else {
+            throw new Error(`Unexpected JsDoc tag: ${line}`);
+        }
+        lines.shift();
+    }
+
+    return result;
 }

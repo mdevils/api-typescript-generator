@@ -24,10 +24,14 @@ export default async function (): Promise<ApiTypescriptGeneratorConfig> {
                     library: 'zod'
                 },
                 postprocess: {
-                    eslint: true
+                    eslint: false
                 },
                 core: {
-                    cleanupFiles: true
+                    cleanupFiles: true,
+                    generateJsDoc: ({suggestedJsDoc}) => ({
+                        ...suggestedJsDoc,
+                        tags: [...suggestedJsDoc.tags, {name: 'internal'}]
+                    })
                 },
                 models: {
                     cleanupFiles: true

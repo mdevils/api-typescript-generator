@@ -1,5 +1,14 @@
+/**
+ * Options for the common HTTP client.
+ */
 export interface CommonHttpClientOptions {
+    /**
+     * Base URL for the API. Endpoints are relative to this URL.
+     */
     baseUrl: string;
+    /**
+     * Error class to be thrown when an error occurs.
+     */
     errorClass: {
         new (
             url: URL,
@@ -9,23 +18,47 @@ export interface CommonHttpClientOptions {
             message: string
         ): Error;
     };
+    /**
+     * Default headers to be sent with each request.
+     */
     headers?: CommonHttpClientRequestHeaders;
+    /**
+     * Preprocess the request before sending it.
+     */
     preprocessRequest?: (request: CommonHttpClientRequest) => Promise<CommonHttpClientRequest>;
+    /**
+     * Preprocess the response before returning it.
+     */
     preprocessFetchResponse?: (
         response: CommonHttpClientFetchResponse,
         request: CommonHttpClientFetchRequest
     ) => Promise<CommonHttpClientFetchResponse>;
+    /**
+     * Fetch function. Default is window.fetch-based implementation.
+     */
     fetch?: (url: URL, request: CommonHttpClientFetchRequest) => Promise<CommonHttpClientFetchResponse>;
+    /**
+     * Type of the response body for binary responses.
+     */
     binaryResponseType: 'blob' | 'readableStream';
+    /**
+     * Format the HTTP error message.
+     */
     formatHttpErrorMessage?: (response: CommonHttpClientFetchResponse, request: CommonHttpClientFetchRequest) => string;
 }
 
-export interface CommonHttpClientRequestHeaders {
-    [headerName: string]: string | undefined | null;
-}
-
+/**
+ * Request headers as used by the fetch function.
+ */
 export interface CommonHttpClientFetchRequestHeaders {
     [headerName: string]: string;
+}
+
+/**
+ * A forgiving version of the request headers. Undefined and null values are allowed.
+ */
+export interface CommonHttpClientRequestHeaders {
+    [headerName: string]: string | undefined | null;
 }
 
 /**
@@ -141,10 +174,25 @@ export interface CommonHttpClientResponse<T> {
     response: CommonHttpClientFetchResponse;
 }
 
+/**
+ * Error thrown by the common HTTP client.
+ */
 export class CommonHttpClientError extends Error {
+    /**
+     * URL of the request.
+     */
     public readonly url: URL;
+    /**
+     * Request that caused the error. Can be undefined in case of failure during request building phase.
+     */
     public readonly request: CommonHttpClientFetchRequest | undefined;
+    /**
+     * Response that caused the error. Can be undefined in case of network failure.
+     */
     public readonly response: CommonHttpClientFetchResponse | undefined;
+    /**
+     * Options of the common HTTP client.
+     */
     public readonly options: CommonHttpClientOptions | undefined;
     constructor(
         url: URL,
@@ -181,6 +229,9 @@ function readableStreamToBlob(stream: ReadableStream<Uint8Array>): Promise<Blob>
     });
 }
 
+/**
+ * Convert the response body to the desired type.
+ */
 async function convertResponseBody(
     body: CommonHttpClientFetchResponseBody,
     destType: CommonHttpClientFetchResponseBody['type']
@@ -315,6 +366,9 @@ function getErrorMessage(e: unknown) {
     return e instanceof Error ? e.message : String(e);
 }
 
+/**
+ * Common HTTP client. Configurable for different environments.
+ */
 export class CommonHttpClient {
     protected options: CommonHttpClientOptions;
 
@@ -322,14 +376,23 @@ export class CommonHttpClient {
         this.options = options;
     }
 
+    /**
+     * Configure the client.
+     */
     public setOptions(options: CommonHttpClientOptions) {
         this.options = options;
     }
 
+    /**
+     * Get the current configuration.
+     */
     public getOptions(): CommonHttpClientOptions {
         return this.options;
     }
 
+    /**
+     * Turns an object with query params into a URLSearchParams object.
+     */
     protected getSearchParams(params: Record<string, unknown>): URLSearchParams {
         const result = new URLSearchParams();
 
@@ -356,6 +419,9 @@ export class CommonHttpClient {
         return result;
     }
 
+    /**
+     * Build the URL path from the request by applying path params.
+     */
     protected buildUrlPath(request: CommonHttpClientRequest): string {
         const pathParams = request.pathParams;
         if (pathParams) {
@@ -369,6 +435,9 @@ export class CommonHttpClient {
         return request.path;
     }
 
+    /**
+     * Build the full URL from the request.
+     */
     protected buildUrl(request: CommonHttpClientRequest): URL {
         const url = new URL(this.buildUrlPath(request).replace(/^\//, ''), this.options.baseUrl.replace(/\/?$/, '/'));
         if (request.query) {
@@ -379,6 +448,9 @@ export class CommonHttpClient {
         return url;
     }
 
+    /**
+     * Default fetch implementation.
+     */
     protected async fetch(url: URL, request: CommonHttpClientFetchRequest): Promise<CommonHttpClientFetchResponse> {
         const {...requestProps} = request;
         const requestInit: RequestInit = requestProps;
@@ -404,6 +476,9 @@ export class CommonHttpClient {
         };
     }
 
+    /**
+     * Perform a request.
+     */
     public async request(request: CommonHttpClientRequest): Promise<CommonHttpClientFetchResponse> {
         try {
             request = await this.preprocessRequest(request);
@@ -497,6 +572,9 @@ export class CommonHttpClient {
         return fetchResponse;
     }
 
+    /**
+     * Post-process the response.
+     */
     responseHandler(distribution: {
         [statusCode: string]: {[mediaType: string]: CommonHttpClientFetchResponseBody['type']};
     }) {
@@ -565,6 +643,9 @@ export class CommonHttpClient {
         };
     }
 
+    /**
+     * Remove undefined and null values from headers.
+     */
     private cleanupHeaders(headers?: CommonHttpClientRequestHeaders): CommonHttpClientFetchRequestHeaders {
         if (headers === undefined) {
             return {};
