@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.4.18](https://github.com/mdevils/api-typescript-generator/compare/v2.4.17...v2.4.18) (2024-07-05)
+
+
+### Bug Fixes
+
+* correct fieldPath when generating model jsdoc ([b4f2d10](https://github.com/mdevils/api-typescript-generator/commit/b4f2d104e84f66850ee07ab6b8b2579baa6effcf))
+
 ### [2.4.17](https://github.com/mdevils/api-typescript-generator/compare/v2.4.16...v2.4.17) (2024-07-02)
 
 
