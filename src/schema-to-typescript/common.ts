@@ -199,7 +199,7 @@ export function generateSchemaType({
                 tsTypeLiteral(
                     Object.entries(schema.properties).map(([fieldName, fieldSchema]) => {
                         let jsdoc = extractJsDoc(fieldSchema);
-                        const currentProcessJsDocPath = processJsDocPath ?? [];
+                        const currentProcessJsDocPath = (processJsDocPath ?? []).concat(fieldName);
                         if (processJsDoc) {
                             jsdoc = processJsDoc(jsdoc, fieldSchema, currentProcessJsDocPath);
                         }
@@ -211,7 +211,7 @@ export function generateSchemaType({
                                         generateSchemaType({
                                             schema: fieldSchema,
                                             ...commonSchemaGenerationOptions,
-                                            processJsDocPath: currentProcessJsDocPath.concat(fieldName)
+                                            processJsDocPath: currentProcessJsDocPath
                                         })
                                     )
                                 ),
