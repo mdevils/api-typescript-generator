@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.4.19](https://github.com/mdevils/api-typescript-generator/compare/v2.4.18...v2.4.19) (2024-07-22)
+
+
+### Bug Fixes
+
+* support parameter serialization style / explode ([ff073b5](https://github.com/mdevils/api-typescript-generator/commit/ff073b59e72452fbcf9dd69ba7923d747a254ca5))
+
 ### [2.4.18](https://github.com/mdevils/api-typescript-generator/compare/v2.4.17...v2.4.18) (2024-07-05)
 
 
