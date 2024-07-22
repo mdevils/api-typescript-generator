@@ -96,6 +96,44 @@ export interface CommonHttpClientFetchRequest {
 }
 
 /**
+ * Parameter serialization style.
+ */
+export type CommonHttpClientRequestParameterSerializeStyle =
+    | 'simple'
+    | 'label'
+    | 'matrix'
+    | 'form'
+    | 'spaceDelimited'
+    | 'pipeDelimited'
+    | 'deepObject';
+
+/**
+ * Information about how to serialize a request parameter.
+ */
+export interface CommonHttpClientRequestParameterSerializeInfo {
+    /**
+     * Serialization style.
+     */
+    style?: CommonHttpClientRequestParameterSerializeStyle;
+    /**
+     * Serialization explode.
+     */
+    explode?: boolean;
+}
+
+/**
+ * Request parameter location.
+ */
+export type CommonHttpClientRequestParameterLocation = 'path' | 'query' | 'header' | 'cookie';
+
+/**
+ * Request parameters.
+ */
+export type CommonHttpClientRequestParameters = {
+    [K in CommonHttpClientRequestParameterLocation]?: Record<string, CommonHttpClientRequestParameterSerializeInfo>;
+};
+
+/**
  * Request in terms of OpenAPI.
  */
 export type CommonHttpClientRequest = Omit<
@@ -122,6 +160,10 @@ export type CommonHttpClientRequest = Omit<
      * Request headers.
      */
     headers?: CommonHttpClientRequestHeaders;
+    /**
+     * Request parameters serialization information.
+     */
+    parameters?: CommonHttpClientRequestParameters;
 } & Partial<Pick<CommonHttpClientFetchRequest, 'cache' | 'credentials' | 'redirect'>>;
 
 /**
@@ -367,6 +409,197 @@ function getErrorMessage(e: unknown) {
 }
 
 /**
+ * Parameter formatter.
+ */
+type ParameterFormatter = (key: string, value: unknown, explode: boolean) => ParameterFormatterResult;
+
+/**
+ * Parameter formatter result.
+ */
+interface ParameterFormatterResult {
+    pairs: {key?: string; value: string}[];
+    pairSeparator?: string;
+    keyValueSeparator?: string;
+}
+
+function parameterHasValue(value: unknown): value is string | number | boolean | Record<string, unknown> | unknown[] {
+    return (
+        value !== null &&
+        value !== undefined &&
+        (!Array.isArray(value) || value.length > 0) &&
+        (typeof value !== 'object' || Object.keys(value).length > 0)
+    );
+}
+
+function parameterFormattedParameterToString({
+    pairs,
+    pairSeparator = '',
+    keyValueSeparator = ''
+}: ParameterFormatterResult): string {
+    return pairs
+        .map(({key, value}) => (key !== undefined ? `${key}${keyValueSeparator}${value}` : value))
+        .join(pairSeparator);
+}
+
+const formatParameter: Record<CommonHttpClientRequestParameterSerializeStyle, ParameterFormatter> = {
+    simple(_key: string, value: unknown, explode: boolean): ParameterFormatterResult {
+        if (!parameterHasValue(value)) {
+            return {pairs: []};
+        }
+        if (Array.isArray(value)) {
+            return {pairs: [{value: value.join(',')}]};
+        }
+        if (typeof value === 'object' && value !== null) {
+            return {
+                pairs: [
+                    {
+                        value: Object.entries(value)
+                            .map(([key, val]) => `${key}${explode ? '=' : ','}${val}`)
+                            .join(',')
+                    }
+                ]
+            };
+        }
+        return {pairs: [{value: String(value)}]};
+    },
+    label(_key: string, value: unknown, explode: boolean): ParameterFormatterResult {
+        if (!parameterHasValue(value)) {
+            return {pairs: [{value: '.'}]};
+        }
+        if (Array.isArray(value)) {
+            return {pairs: [{value: '.' + value.join('.')}]};
+        }
+        if (typeof value === 'object' && value !== null) {
+            return {
+                pairs: [
+                    {
+                        value: Object.entries(value)
+                            .map(([key, val]) => `.${key}${explode ? '=' : '.'}${val}`)
+                            .join('')
+                    }
+                ]
+            };
+        }
+        return {pairs: [{value: '.' + String(value)}]};
+    },
+    matrix(key: string, value: unknown, explode: boolean): ParameterFormatterResult {
+        if (!parameterHasValue(value)) {
+            return {pairs: [{value: `;${key}`}]};
+        }
+        if (Array.isArray(value)) {
+            return {
+                pairs: [{value: explode ? value.map((val) => `;${key}=${val}`).join('') : `;${key}=${value.join(',')}`}]
+            };
+        }
+        if (typeof value === 'object') {
+            return {
+                pairs: [
+                    {
+                        value: explode
+                            ? Object.entries(value)
+                                  .map(([subKey, subValue]) => `;${subKey}=${subValue}`)
+                                  .join('')
+                            : `;${key}=${Object.entries(value)
+                                  .map(([subKey, subValue]) => `${subKey},${subValue}`)
+                                  .join(',')}`
+                    }
+                ]
+            };
+        }
+        return {pairs: [{value: `;${key}=${String(value)}`}]};
+    },
+    form(key: string, value: unknown, explode: boolean): ParameterFormatterResult {
+        if (!parameterHasValue(value)) {
+            return {pairs: []};
+        }
+        if (Array.isArray(value)) {
+            return {
+                pairs: explode ? value.map((val) => ({key, value: String(val)})) : [{key, value: value.join(',')}],
+                pairSeparator: '&',
+                keyValueSeparator: '='
+            };
+        }
+        if (typeof value === 'object') {
+            return {
+                pairs: explode
+                    ? Object.entries(value).map(([subKey, subValue]) => ({key: subKey, value: String(subValue)}))
+                    : [
+                          {
+                              key,
+                              value: Object.entries(value)
+                                  .map(([subKey, subValue]) => `${subKey},${subValue}`)
+                                  .join(',')
+                          }
+                      ],
+                pairSeparator: '&',
+                keyValueSeparator: '='
+            };
+        }
+        return {pairs: [{key, value: String(value)}]};
+    },
+    spaceDelimited(key: string, value: unknown): ParameterFormatterResult {
+        if (!parameterHasValue(value)) {
+            return {pairs: []};
+        }
+        if (Array.isArray(value)) {
+            return {
+                pairs: [{key, value: value.join(' ')}]
+            };
+        }
+        if (typeof value === 'object') {
+            return {
+                pairs: [
+                    {
+                        key,
+                        value: Object.entries(value)
+                            .map(([subKey, subValue]) => `${subKey} ${subValue}`)
+                            .join(' ')
+                    }
+                ]
+            };
+        }
+        return {pairs: [{key, value: String(value)}]};
+    },
+    pipeDelimited(key: string, value: unknown): ParameterFormatterResult {
+        if (!parameterHasValue(value)) {
+            return {pairs: []};
+        }
+        if (Array.isArray(value)) {
+            return {
+                pairs: [{key, value: value.join('|')}]
+            };
+        }
+        if (typeof value === 'object') {
+            return {
+                pairs: [
+                    {
+                        key,
+                        value: Object.entries(value)
+                            .map(([subKey, subValue]) => `${subKey}|${subValue}`)
+                            .join('|')
+                    }
+                ]
+            };
+        }
+        return {pairs: [{key, value: String(value)}]};
+    },
+    deepObject(key: string, value: unknown): ParameterFormatterResult {
+        if (typeof value === 'object' && !Array.isArray(value) && value !== null) {
+            return {
+                pairs: Object.entries(value).flatMap(
+                    ([subKey, subValue]) => formatParameter.deepObject(`${key}[${subKey}]`, subValue, true).pairs
+                ),
+                pairSeparator: '&',
+                keyValueSeparator: '='
+            };
+        }
+        return {
+            pairs: [{key, value: String(value)}]
+        };
+    }
+};
+
+/**
  * Common HTTP client. Configurable for different environments.
  */
 export class CommonHttpClient {
@@ -393,41 +626,41 @@ export class CommonHttpClient {
     /**
      * Turns an object with query params into a URLSearchParams object.
      */
-    protected getSearchParams(params: Record<string, unknown>): URLSearchParams {
+    protected getSearchParams(
+        params: Record<string, unknown>,
+        parameters: Record<string, CommonHttpClientRequestParameterSerializeInfo>
+    ): URLSearchParams {
         const result = new URLSearchParams();
-
-        const process = (key: string, value: unknown) => {
-            if (value !== undefined && value !== null) {
-                if (Array.isArray(value)) {
-                    for (const arrayVal of value) {
-                        process(key, arrayVal);
-                    }
-                } else if (typeof value === 'object') {
-                    for (const [subKey, subValue] of Object.entries(params)) {
-                        process(`${key}[${subKey}]`, subValue);
-                    }
-                } else {
-                    result.append(key, String(value));
+        for (const [key, value] of Object.entries(params)) {
+            const {style = 'form', explode = style === 'form'}: CommonHttpClientRequestParameterSerializeInfo =
+                parameters[key] ?? {};
+            const {pairs} = formatParameter[style](key, value, explode);
+            for (const {key, value} of pairs) {
+                if (key !== undefined) {
+                    result.append(key, value);
                 }
             }
-        };
-
-        for (const [key, value] of Object.entries(params)) {
-            process(key, value);
         }
-
         return result;
     }
 
     /**
      * Build the URL path from the request by applying path params.
      */
-    protected buildUrlPath(request: CommonHttpClientRequest): string {
+    protected buildUrlPath(
+        request: CommonHttpClientRequest,
+        parameters: Record<string, CommonHttpClientRequestParameterSerializeInfo>
+    ): string {
         const pathParams = request.pathParams;
         if (pathParams) {
             return request.path.replace(/\{(.*?)}/g, (original, paramName: string) => {
                 if (Object.prototype.hasOwnProperty.call(pathParams, paramName)) {
-                    return encodeURI(String(pathParams[paramName]));
+                    const {style = 'simple', explode = false} = parameters[paramName] ?? {};
+                    return encodeURI(
+                        parameterFormattedParameterToString(
+                            formatParameter[style](paramName, pathParams[paramName], explode)
+                        )
+                    );
                 }
                 return original;
             });
@@ -439,9 +672,12 @@ export class CommonHttpClient {
      * Build the full URL from the request.
      */
     protected buildUrl(request: CommonHttpClientRequest): URL {
-        const url = new URL(this.buildUrlPath(request).replace(/^\//, ''), this.options.baseUrl.replace(/\/?$/, '/'));
+        const url = new URL(
+            this.buildUrlPath(request, request.parameters?.path ?? {}).replace(/^\//, ''),
+            this.options.baseUrl.replace(/\/?$/, '/')
+        );
         if (request.query) {
-            for (const [key, value] of this.getSearchParams(request.query)) {
+            for (const [key, value] of this.getSearchParams(request.query, request.parameters?.query ?? {})) {
                 url.searchParams.append(key, value);
             }
         }

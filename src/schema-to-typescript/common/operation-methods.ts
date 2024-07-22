@@ -44,6 +44,7 @@ import {
 } from '../../utils/dependencies';
 import {attachJsDocComment, extractJsDoc, JsDocRenderConfig, renderJsDoc} from '../../utils/jsdoc';
 import {isJsonMediaType, isWildcardMediaType} from '../../utils/media-types';
+import {buildParametersSerializationInfo} from '../../utils/parameter-serialization-styles';
 import {applyEntityNameCase} from '../../utils/string-utils';
 import {getUserFreiendlySchemaName, isAssignableToEmptyObject, mergeTypes} from '../../utils/type-utils';
 import {objectPropertyKey, valueToAstExpression} from '../common';
@@ -572,6 +573,11 @@ export function generateOperationMethods({
                         objectExpression(inputParameters['header'].map(renderParameter))
                     )
                 );
+            }
+
+            const parametersSerializationInfo = buildParametersSerializationInfo(parameters);
+            if (parametersSerializationInfo) {
+                requestObject.properties.push(objectProperty(identifier('parameters'), parametersSerializationInfo));
             }
 
             const argument = objectPattern([]);

@@ -96,7 +96,7 @@ ___
 
 ### in
 
-• **in**: ``"query"`` \| ``"header"`` \| ``"path"`` \| ``"cookie"``
+• **in**: [`OpenApiParameterIn`](../modules/openapi.md#openapiparameterin)
 
 The location of the parameter. Possible values are "query", "header", "path" or "cookie".
 
@@ -135,7 +135,7 @@ ___
 
 ### style
 
-• `Optional` **style**: ``"matrix"`` \| ``"label"`` \| ``"form"`` \| ``"simple"`` \| ``"spaceDelimited"`` \| ``"pipeDelimited"`` \| ``"deepObject"``
+• `Optional` **style**: [`OpenApiParameterStyle`](../modules/openapi.md#openapiparameterstyle)
 
 Describes how the parameter value will be serialized depending on the type of the parameter value. Default values
 (based on value of in): for query - form; for path - simple; for header - simple; for cookie - form.

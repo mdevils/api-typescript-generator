@@ -19,6 +19,23 @@ export type OpenApiFormats =
     | 'email';
 
 /**
+ * The type of serialization to use for the parameter.
+ */
+export type OpenApiParameterStyle =
+    | 'matrix'
+    | 'label'
+    | 'form'
+    | 'simple'
+    | 'spaceDelimited'
+    | 'pipeDelimited'
+    | 'deepObject';
+
+/**
+ * Parameter locations.
+ */
+export type OpenApiParameterIn = 'query' | 'header' | 'path' | 'cookie';
+
+/**
  * Describes a single operation parameter. A unique parameter is defined by a combination of a name and location.
  *
  * @see https://swagger.io/specification/#parameter-object
@@ -37,7 +54,7 @@ export interface OpenApiParameter {
     /**
      * The location of the parameter. Possible values are "query", "header", "path" or "cookie".
      */
-    in: 'query' | 'header' | 'path' | 'cookie';
+    in: OpenApiParameterIn;
     /**
      * A brief description of the parameter. This could contain examples of use. CommonMark syntax MAY be used for rich
      * text representation.
@@ -61,7 +78,7 @@ export interface OpenApiParameter {
      * Describes how the parameter value will be serialized depending on the type of the parameter value. Default values
      * (based on value of in): for query - form; for path - simple; for header - simple; for cookie - form.
      */
-    style?: 'matrix' | 'label' | 'form' | 'simple' | 'spaceDelimited' | 'pipeDelimited' | 'deepObject';
+    style?: OpenApiParameterStyle;
     /**
      * When this is true, parameter values of type array or object generate separate parameters for each value of the
      * array or key-value pair of the map. For other types of parameters this property has no effect. When style is

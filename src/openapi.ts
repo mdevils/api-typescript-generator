@@ -21,6 +21,8 @@ export type {
     OpenApiExample,
     OpenApiExternalDocumentation,
     OpenApiParameter,
+    OpenApiParameterStyle,
+    OpenApiParameterIn,
     OpenApiSchema,
     OpenApiServer,
     OpenApiContact,

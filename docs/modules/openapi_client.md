@@ -15,6 +15,7 @@
 - [CommonHttpClientFetchResponse](../interfaces/openapi_client.CommonHttpClientFetchResponse.md)
 - [CommonHttpClientOptions](../interfaces/openapi_client.CommonHttpClientOptions.md)
 - [CommonHttpClientRequestHeaders](../interfaces/openapi_client.CommonHttpClientRequestHeaders.md)
+- [CommonHttpClientRequestParameterSerializeInfo](../interfaces/openapi_client.CommonHttpClientRequestParameterSerializeInfo.md)
 - [CommonHttpClientResponse](../interfaces/openapi_client.CommonHttpClientResponse.md)
 - [OpenApiClientExternalType](../interfaces/openapi_client.OpenApiClientExternalType.md)
 - [OpenApiClientExternalValue](../interfaces/openapi_client.OpenApiClientExternalValue.md)
@@ -35,6 +36,9 @@
 
 - [CommonHttpClientFetchResponseBody](openapi_client.md#commonhttpclientfetchresponsebody)
 - [CommonHttpClientRequest](openapi_client.md#commonhttpclientrequest)
+- [CommonHttpClientRequestParameterLocation](openapi_client.md#commonhttpclientrequestparameterlocation)
+- [CommonHttpClientRequestParameterSerializeStyle](openapi_client.md#commonhttpclientrequestparameterserializestyle)
+- [CommonHttpClientRequestParameters](openapi_client.md#commonhttpclientrequestparameters)
 - [CommonHttpClientResponseHeaders](openapi_client.md#commonhttpclientresponseheaders)
 - [GenerateClientErrorJsDoc](openapi_client.md#generateclienterrorjsdoc)
 - [GenerateClientJsDoc](openapi_client.md#generateclientjsdoc)
@@ -64,9 +68,33 @@ ___
 
 ### CommonHttpClientRequest
 
-Ƭ **CommonHttpClientRequest**: `Omit`\<[`CommonHttpClientFetchRequest`](../interfaces/openapi_client.CommonHttpClientFetchRequest.md), ``"body"`` \| ``"headers"`` \| ``"cache"`` \| ``"credentials"`` \| ``"redirect"``\> & \{ `body?`: `unknown` ; `headers?`: [`CommonHttpClientRequestHeaders`](../interfaces/openapi_client.CommonHttpClientRequestHeaders.md) ; `path`: `string` ; `pathParams?`: `Record`\<`string`, `unknown`\> ; `query?`: `Record`\<`string`, `unknown`\>  } & `Partial`\<`Pick`\<[`CommonHttpClientFetchRequest`](../interfaces/openapi_client.CommonHttpClientFetchRequest.md), ``"cache"`` \| ``"credentials"`` \| ``"redirect"``\>\>
+Ƭ **CommonHttpClientRequest**: `Omit`\<[`CommonHttpClientFetchRequest`](../interfaces/openapi_client.CommonHttpClientFetchRequest.md), ``"body"`` \| ``"headers"`` \| ``"cache"`` \| ``"credentials"`` \| ``"redirect"``\> & \{ `body?`: `unknown` ; `headers?`: [`CommonHttpClientRequestHeaders`](../interfaces/openapi_client.CommonHttpClientRequestHeaders.md) ; `parameters?`: [`CommonHttpClientRequestParameters`](openapi_client.md#commonhttpclientrequestparameters) ; `path`: `string` ; `pathParams?`: `Record`\<`string`, `unknown`\> ; `query?`: `Record`\<`string`, `unknown`\>  } & `Partial`\<`Pick`\<[`CommonHttpClientFetchRequest`](../interfaces/openapi_client.CommonHttpClientFetchRequest.md), ``"cache"`` \| ``"credentials"`` \| ``"redirect"``\>\>
 
 Request in terms of OpenAPI.
+
+___
+
+### CommonHttpClientRequestParameterLocation
+
+Ƭ **CommonHttpClientRequestParameterLocation**: ``"path"`` \| ``"query"`` \| ``"header"`` \| ``"cookie"``
+
+Request parameter location.
+
+___
+
+### CommonHttpClientRequestParameterSerializeStyle
+
+Ƭ **CommonHttpClientRequestParameterSerializeStyle**: ``"simple"`` \| ``"label"`` \| ``"matrix"`` \| ``"form"`` \| ``"spaceDelimited"`` \| ``"pipeDelimited"`` \| ``"deepObject"``
+
+Parameter serialization style.
+
+___
+
+### CommonHttpClientRequestParameters
+
+Ƭ **CommonHttpClientRequestParameters**: \{ [K in CommonHttpClientRequestParameterLocation]?: Record\<string, CommonHttpClientRequestParameterSerializeInfo\> }
+
+Request parameters.
 
 ___
 

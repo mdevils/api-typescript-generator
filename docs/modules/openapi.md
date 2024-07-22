@@ -33,6 +33,8 @@
 - [OpenApiFormats](openapi.md#openapiformats)
 - [OpenApiHeader](openapi.md#openapiheader)
 - [OpenApiHttpMethod](openapi.md#openapihttpmethod)
+- [OpenApiParameterIn](openapi.md#openapiparameterin)
+- [OpenApiParameterStyle](openapi.md#openapiparameterstyle)
 - [OpenApiPathItem](openapi.md#openapipathitem)
 - [OpenApiPaths](openapi.md#openapipaths)
 - [OpenApiPrimitiveTypes](openapi.md#openapiprimitivetypes)
@@ -66,6 +68,22 @@ ___
 Ƭ **OpenApiHttpMethod**: typeof [`openApiHttpMethods`](openapi.md#openapihttpmethods)[`number`]
 
 OpenAPI HTTP method.
+
+___
+
+### OpenApiParameterIn
+
+Ƭ **OpenApiParameterIn**: ``"query"`` \| ``"header"`` \| ``"path"`` \| ``"cookie"``
+
+Parameter locations.
+
+___
+
+### OpenApiParameterStyle
+
+Ƭ **OpenApiParameterStyle**: ``"matrix"`` \| ``"label"`` \| ``"form"`` \| ``"simple"`` \| ``"spaceDelimited"`` \| ``"pipeDelimited"`` \| ``"deepObject"``
+
+The type of serialization to use for the parameter.
 
 ___
 
