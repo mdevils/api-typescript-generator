@@ -210,8 +210,16 @@ export function getOperationReturnType({
         validators.push((expression) =>
             callExpression(memberExpression(expression, identifier('then')), [
                 callExpression(
-                    memberExpression(identifier(validationSchemaStorageImportName), identifier('validator')),
-                    [stringLiteral(validationSchemaName)]
+                    memberExpression(
+                        callExpression(memberExpression(thisExpression(), identifier('getClientInstance')), []),
+                        identifier('validation')
+                    ),
+                    [
+                        callExpression(
+                            memberExpression(identifier(validationSchemaStorageImportName), identifier('validator')),
+                            [stringLiteral(validationSchemaName)]
+                        )
+                    ]
                 )
             ])
         );

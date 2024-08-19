@@ -45,6 +45,10 @@ export interface CommonHttpClientOptions {
      * Format the HTTP error message.
      */
     formatHttpErrorMessage?: (response: CommonHttpClientFetchResponse, request: CommonHttpClientFetchRequest) => string;
+    /**
+     * Custom validation error handling. Can be used to log errors.
+     */
+    handleValidationError?: (error: Error) => void;
 }
 
 /**
@@ -875,6 +879,21 @@ export class CommonHttpClient {
                     this.options,
                     `Error converting response body: ${getErrorMessage(e)}`
                 );
+            }
+        };
+    }
+
+    public validation<D>(validator: (data: D) => D): (data: D) => D {
+        const handleValidationError = this.options.handleValidationError;
+        if (!handleValidationError) {
+            return validator;
+        }
+        return (data: D) => {
+            try {
+                return validator(data);
+            } catch (error) {
+                handleValidationError(error instanceof Error ? error : new Error(String(error)));
+                return data;
             }
         };
     }

@@ -15,6 +15,7 @@ Options for the common HTTP client.
 - [errorClass](openapi_client.CommonHttpClientOptions.md#errorclass)
 - [fetch](openapi_client.CommonHttpClientOptions.md#fetch)
 - [formatHttpErrorMessage](openapi_client.CommonHttpClientOptions.md#formathttperrormessage)
+- [handleValidationError](openapi_client.CommonHttpClientOptions.md#handlevalidationerror)
 - [headers](openapi_client.CommonHttpClientOptions.md#headers)
 - [preprocessFetchResponse](openapi_client.CommonHttpClientOptions.md#preprocessfetchresponse)
 - [preprocessRequest](openapi_client.CommonHttpClientOptions.md#preprocessrequest)
@@ -102,6 +103,28 @@ Format the HTTP error message.
 ##### Returns
 
 `string`
+
+___
+
+### handleValidationError
+
+• `Optional` **handleValidationError**: (`error`: `Error`) => `void`
+
+#### Type declaration
+
+▸ (`error`): `void`
+
+Custom validation error handling. Can be used to log errors.
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `error` | `Error` |
+
+##### Returns
+
+`void`
 
 ___
 
