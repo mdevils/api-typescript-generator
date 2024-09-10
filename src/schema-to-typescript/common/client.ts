@@ -97,6 +97,7 @@ export function generateClient({
         errorClassName,
         generateJsDoc,
         generateErrorJsDoc,
+        baseUrl,
         ...filenameConfig
     },
     generatedServiceImports,
@@ -163,7 +164,10 @@ export function generateClient({
                     memberExpression(identifier(commonHttpClientImportName), identifier(commonHttpClientClassName)),
                     [
                         objectExpression([
-                            objectProperty(identifier('baseUrl'), stringLiteral(servers[0]?.url ?? defaultServerUrl)),
+                            objectProperty(
+                                identifier('baseUrl'),
+                                stringLiteral(baseUrl ?? servers[0]?.url ?? defaultServerUrl)
+                            ),
                             objectProperty(identifier('binaryResponseType'), stringLiteral(responseBinaryType)),
                             objectProperty(identifier('errorClass'), identifier(errorTypeName))
                         ])
