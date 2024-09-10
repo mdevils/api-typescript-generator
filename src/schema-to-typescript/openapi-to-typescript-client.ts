@@ -755,7 +755,16 @@ export interface OpenApiClientGeneratorConfigClient {
         | 'all'
         | 'none'
         | {
+              /**
+               * Model names to be exported.
+               */
               models: string[];
+          }
+        | {
+              /**
+               * Original schema names of the models to be exported.
+               */
+              schemas: string[];
           };
     /**
      * Whether to export the error class from the client file.

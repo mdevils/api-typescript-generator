@@ -55,6 +55,31 @@ import {
 
 const defaultServerUrl = 'http://example.com';
 
+/**
+ * Calculate model names to export based on the exportModels configuration.
+ */
+function calculateModelNamesToExport(
+    exportModels: Exclude<OpenApiClientGeneratorConfig['client'], false>['exportModels'] = 'none',
+    modelImportInfos: ModelImportInfo[]
+): Set<string> {
+    if (exportModels === 'none') {
+        return new Set();
+    }
+    if (exportModels === 'all') {
+        return new Set(modelImportInfos.map(({modelName}) => modelName));
+    }
+    if ('models' in exportModels) {
+        return new Set(exportModels.models);
+    }
+    if ('schemas' in exportModels) {
+        const schemaNamesSet = new Set(exportModels.schemas);
+        return new Set(
+            modelImportInfos.filter(({schemaName}) => schemaNamesSet.has(schemaName)).map(({modelName}) => modelName)
+        );
+    }
+    throw new Error('Invalid exportModels configuration.');
+}
+
 export function generateClient({
     commonHttpClientClassName,
     commonHttpClientClassOptionsName,
@@ -298,20 +323,16 @@ export function generateClient({
     const exportTypes: ExportNamedDeclaration = exportNamedDeclaration(null, []);
     exportTypes.exportKind = 'type';
 
-    if (exportModels && exportModels !== 'none') {
-        const modelsToExport = new Set(
-            exportModels === 'all' ? modelImportInfos.map(({modelName}) => modelName) : exportModels.models
-        );
-        for (const {modelName, importPath} of modelImportInfos) {
-            if (!modelsToExport.has(modelName)) {
-                continue;
-            }
-            addDependencyImport(dependencyImports, getRelativeImportPath(clientImportPath, importPath), modelName, {
-                kind: 'type',
-                entity: {name: modelName}
-            });
-            exportTypes.specifiers.push(exportSpecifier(identifier(modelName), identifier(modelName)));
+    const modelNamesToExport = calculateModelNamesToExport(exportModels, modelImportInfos);
+    for (const {modelName, importPath} of modelImportInfos) {
+        if (!modelNamesToExport.has(modelName)) {
+            continue;
         }
+        addDependencyImport(dependencyImports, getRelativeImportPath(clientImportPath, importPath), modelName, {
+            kind: 'type',
+            entity: {name: modelName}
+        });
+        exportTypes.specifiers.push(exportSpecifier(identifier(modelName), identifier(modelName)));
     }
 
     const exports: ExportNamedDeclaration = exportNamedDeclaration(null, []);

@@ -59,7 +59,7 @@ ___
 
 ### exportModels
 
-• `Optional` **exportModels**: ``"all"`` \| ``"none"`` \| \{ `models`: `string`[]  }
+• `Optional` **exportModels**: ``"all"`` \| ``"none"`` \| \{ `models`: `string`[]  } \| \{ `schemas`: `string`[]  }
 
 Whether to export models from the client file.
 

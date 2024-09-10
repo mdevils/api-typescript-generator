@@ -50,6 +50,7 @@ import {
 
 export interface ModelImportInfo {
     modelName: string;
+    schemaName: string;
     importPath: string;
     registerValidationSchemasImportName?: string;
 }
@@ -358,6 +359,7 @@ export function generateModels({
             }
             modelsIndex[schemaName] = {
                 modelName,
+                schemaName,
                 importPath,
                 registerValidationSchemasImportName
             };
