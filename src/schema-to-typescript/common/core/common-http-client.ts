@@ -806,7 +806,7 @@ export class CommonHttpClient {
                 this.options,
                 this.options.formatHttpErrorMessage
                     ? this.options.formatHttpErrorMessage(fetchResponse, fetchRequest)
-                    : `HTTP Error ${fetchResponse.status} (${fetchResponse.statusText})`
+                    : `HTTP Error ${request.method} ${url.toString()} ${fetchResponse.status} (${fetchResponse.statusText})`
             );
         }
         return fetchResponse;
