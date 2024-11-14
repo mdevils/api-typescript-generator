@@ -13,6 +13,7 @@ import {
     identifier,
     importDeclaration,
     importNamespaceSpecifier,
+    logicalExpression,
     memberExpression,
     newExpression,
     objectExpression,
@@ -170,6 +171,14 @@ export function generateClient({
     });
 
     const clientConstructorOptionsObject = objectExpression([
+        objectProperty(
+            identifier('apiClientClassName'),
+            logicalExpression(
+                '??',
+                memberExpression(memberExpression(thisExpression(), identifier('constructor')), identifier('name')),
+                stringLiteral('name')
+            )
+        ),
         objectProperty(identifier('baseUrl'), stringLiteral(baseUrl ?? servers[0]?.url ?? defaultServerUrl)),
         objectProperty(identifier('binaryResponseType'), stringLiteral(responseBinaryType)),
         objectProperty(identifier('errorClass'), identifier(errorTypeName))

@@ -12,6 +12,7 @@ describe('CommonHttpClient', () => {
         async function getRequestUrl(request: CommonHttpClientRequest): Promise<string> {
             let resultUrl = '';
             const client = new CommonHttpClient({
+                apiClientClassName: 'ApiClient',
                 baseUrl,
                 errorClass: CommonHttpClientError,
                 binaryResponseType: 'blob',

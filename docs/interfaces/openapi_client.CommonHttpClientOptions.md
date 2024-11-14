@@ -10,6 +10,7 @@ Options for the common HTTP client.
 
 ### Properties
 
+- [apiClientClassName](openapi_client.CommonHttpClientOptions.md#apiclientclassname)
 - [baseUrl](openapi_client.CommonHttpClientOptions.md#baseurl)
 - [binaryResponseType](openapi_client.CommonHttpClientOptions.md#binaryresponsetype)
 - [deprecatedOperations](openapi_client.CommonHttpClientOptions.md#deprecatedoperations)
@@ -26,6 +27,14 @@ Options for the common HTTP client.
 - [logDeprecationWarning](openapi_client.CommonHttpClientOptions.md#logdeprecationwarning)
 
 ## Properties
+
+### apiClientClassName
+
+• **apiClientClassName**: `string`
+
+Class name of the API client.
+
+___
 
 ### baseUrl
 

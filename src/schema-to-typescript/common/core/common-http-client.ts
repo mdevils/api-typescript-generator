@@ -19,6 +19,10 @@ export interface CommonHttpClientOptions {
         ): Error;
     };
     /**
+     * Class name of the API client.
+     */
+    apiClientClassName: string;
+    /**
      * Default headers to be sent with each request.
      */
     headers?: CommonHttpClientRequestHeaders;
@@ -666,7 +670,7 @@ export class CommonHttpClient {
                 this.options.logDeprecationWarning({method: params.method, path: params.path, operationName});
             } else {
                 console.warn(
-                    `Deprecated API call ${this.constructor.name ?? 'ApiClient'}.${operationName}: ${methodAndPath}`
+                    `Deprecated API call ${this.options.apiClientClassName}.${operationName}: ${methodAndPath}`
                 );
             }
         }

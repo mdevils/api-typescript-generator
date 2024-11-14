@@ -14,7 +14,7 @@ describe('pet-service', () => {
         client.pet.findPetsByTags({tags: ['tag']});
         expect(warn).toHaveBeenCalledTimes(1);
         expect(warn).toHaveBeenCalledWith(
-            'Deprecated API call CommonHttpClient.pet.findPetsByTags: GET /pet/findByTags'
+            'Deprecated API call PetStoreApiClient.pet.findPetsByTags: GET /pet/findByTags'
         );
     });
 
