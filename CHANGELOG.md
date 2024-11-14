@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.5.1](https://github.com/mdevils/api-typescript-generator/compare/v2.5.0...v2.5.1) (2024-11-14)
+
+
+### Bug Fixes
+
+* include API client class name to the operation deprecation error message ([4da7d8b](https://github.com/mdevils/api-typescript-generator/commit/4da7d8bc03a60078faa6148d7a05a3571a13e28b))
+
 ## [2.5.0](https://github.com/mdevils/api-typescript-generator/compare/v2.4.24...v2.5.0) (2024-11-14)
 
 
