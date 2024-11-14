@@ -12,6 +12,7 @@ Options for the common HTTP client.
 
 - [baseUrl](openapi_client.CommonHttpClientOptions.md#baseurl)
 - [binaryResponseType](openapi_client.CommonHttpClientOptions.md#binaryresponsetype)
+- [deprecatedOperations](openapi_client.CommonHttpClientOptions.md#deprecatedoperations)
 - [errorClass](openapi_client.CommonHttpClientOptions.md#errorclass)
 - [fetch](openapi_client.CommonHttpClientOptions.md#fetch)
 - [formatHttpErrorMessage](openapi_client.CommonHttpClientOptions.md#formathttperrormessage)
@@ -19,6 +20,10 @@ Options for the common HTTP client.
 - [headers](openapi_client.CommonHttpClientOptions.md#headers)
 - [preprocessFetchResponse](openapi_client.CommonHttpClientOptions.md#preprocessfetchresponse)
 - [preprocessRequest](openapi_client.CommonHttpClientOptions.md#preprocessrequest)
+
+### Methods
+
+- [logDeprecationWarning](openapi_client.CommonHttpClientOptions.md#logdeprecationwarning)
 
 ## Properties
 
@@ -35,6 +40,18 @@ ___
 • **binaryResponseType**: ``"blob"`` \| ``"readableStream"``
 
 Type of the response body for binary responses.
+
+___
+
+### deprecatedOperations
+
+• `Optional` **deprecatedOperations**: `Object`
+
+Deprecated operations. Used to warn about deprecated operations.
+
+#### Index signature
+
+▪ [methodAndPath: `string`]: `string`
 
 ___
 
@@ -178,3 +195,24 @@ Preprocess the request before sending it.
 ##### Returns
 
 `Promise`\<[`CommonHttpClientRequest`](../modules/openapi_client.md#commonhttpclientrequest)\>
+
+## Methods
+
+### logDeprecationWarning
+
+▸ `Optional` **logDeprecationWarning**(`params`): `void`
+
+Log a deprecation warning.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `params` | `Object` | - |
+| `params.method` | ``"GET"`` \| ``"HEAD"`` \| ``"POST"`` \| ``"PUT"`` \| ``"DELETE"`` \| ``"CONNECT"`` \| ``"OPTIONS"`` \| ``"PATCH"`` | - |
+| `params.operationName` | `string` | Either operation method name in case if it's not part of the service, or service name and operation method name separated by a dot. Examples: `users.getUserById`, `getSystemConfig` |
+| `params.path` | `string` | - |
+
+#### Returns
+
+`void`

@@ -20,6 +20,7 @@ Configuration for generating operation calls.
 - [makeResponseValidationSchemasExtensible](openapi_client.OpenApiClientGeneratorConfigOperations.md#makeresponsevalidationschemasextensible)
 - [mediaTypeArgumentName](openapi_client.OpenApiClientGeneratorConfigOperations.md#mediatypeargumentname)
 - [responseBinaryType](openapi_client.OpenApiClientGeneratorConfigOperations.md#responsebinarytype)
+- [showDeprecatedWarnings](openapi_client.OpenApiClientGeneratorConfigOperations.md#showdeprecatedwarnings)
 - [validateResponse](openapi_client.OpenApiClientGeneratorConfigOperations.md#validateresponse)
 
 ## Properties
@@ -119,6 +120,20 @@ Binary response/request type. Used when the response is not a JSON value.
 
 ```ts
 'blob'
+```
+
+___
+
+### showDeprecatedWarnings
+
+• `Optional` **showDeprecatedWarnings**: `boolean`
+
+Shows a warning when a deprecated operation is used.
+
+**`Default`**
+
+```ts
+false
 ```
 
 ___

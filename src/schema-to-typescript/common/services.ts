@@ -46,6 +46,7 @@ export interface GeneratedServicesImportInfo {
 export interface GeneratedServices {
     files: ClientGenerationResultFile[];
     services: GeneratedServicesImportInfo[];
+    deprecatedOperations: {[methodAndPath: string]: string};
 }
 
 export const defaultServicesRelativeDirPath = 'services';
@@ -87,6 +88,7 @@ export function generateServices({
     const commonHttpClientImportName = 'commonHttpClient';
     const files: ClientGenerationResultFile[] = [];
     const services: GeneratedServicesImportInfo[] = [];
+    const deprecatedOperations: {[methodAndPath: string]: string} = {};
     for (const [tag, paths] of Object.entries(taggedPaths)) {
         const importPath = path.join(
             relativeDirPath,
@@ -123,7 +125,7 @@ export function generateServices({
 
         services.push({
             name: serviceName,
-            tag: tag,
+            tag,
             importPath,
             jsdoc
         });
@@ -140,6 +142,16 @@ export function generateServices({
             jsDocRenderConfig
         });
         const serviceClassBody = classBody([...serviceMethods.methods]);
+
+        Object.assign(
+            deprecatedOperations,
+            Object.fromEntries(
+                Object.entries(serviceMethods.deprecatedOperations).map(([methodAndPath, operationName]) => [
+                    methodAndPath,
+                    `${applyEntityNameCase(tag, 'camelCase')}.${operationName}`
+                ])
+            )
+        );
 
         if (serviceMethods.validationStatements.length > 0) {
             serviceClassBody.body.push(
@@ -186,5 +198,5 @@ export function generateServices({
             )
         });
     }
-    return {files, services};
+    return {files, services, deprecatedOperations};
 }

@@ -685,6 +685,12 @@ export interface OpenApiClientGeneratorConfigOperations {
      * @default 'blob'
      */
     responseBinaryType?: OpenApiClientBuiltinBinaryType;
+    /**
+     * Shows a warning when a deprecated operation is used.
+     *
+     * @default false
+     */
+    showDeprecatedWarnings?: boolean;
 }
 
 /**
@@ -1125,7 +1131,7 @@ export async function openapiToTypescriptClient({
                 commonHttpServiceImportPath: commonHttpService.importPath,
                 commonHttpServiceClassName: commonHttpService.className,
                 clientConfig: generateConfig.client,
-                generatedServiceImports: generatedServices ? generatedServices.services : [],
+                generatedServiceImports: generatedServices?.services ?? [],
                 servers: document.servers ?? [],
                 info: document.info,
                 paths: extractedTags.rest,
@@ -1136,7 +1142,8 @@ export async function openapiToTypescriptClient({
                 responseBinaryType: generateConfig.operations?.responseBinaryType ?? 'blob',
                 binaryTypes,
                 jsDocRenderConfig: generateConfig.jsDoc,
-                commentsConfig: generateConfig.comments
+                commentsConfig: generateConfig.comments,
+                deprecatedOperations: generatedServices?.deprecatedOperations ?? {}
             })
         );
     }

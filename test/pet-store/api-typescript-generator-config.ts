@@ -18,7 +18,8 @@ export default async function (): Promise<ApiTypescriptGeneratorConfig> {
                 },
                 operations: {
                     validateResponse: true,
-                    makeResponseValidationSchemasExtensible: true
+                    makeResponseValidationSchemasExtensible: true,
+                    showDeprecatedWarnings: true
                 },
                 validation: {
                     library: 'zod'

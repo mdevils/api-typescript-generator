@@ -170,6 +170,7 @@ export function generateOperationMethods({
     const modelRegisterValidationSchemaImports: Record<string, true> = {};
     const methodProperties: ClassProperty[] = [];
     const validationStatements: Statement[] = [];
+    const deprecatedOperations: {[methodAndPath: string]: string} = {};
 
     if (validateResponse && !validationContext) {
         throw new Error('Validation should be configured for response validation.');
@@ -211,6 +212,9 @@ export function generateOperationMethods({
                       httpMethod
                   })
                 : suggestedOperationMethodName;
+            if (operation.deprecated) {
+                deprecatedOperations[`${httpMethod.toUpperCase()} ${path}`] = operationName;
+            }
             const operationReturn = getOperationReturnType({
                 operation,
                 getModelData,
@@ -679,5 +683,5 @@ export function generateOperationMethods({
 
     methodProperties.sort((a, b) => (a.key as Identifier).name.localeCompare((b.key as Identifier).name));
 
-    return {methods: methodProperties, dependencyImports, validationStatements};
+    return {methods: methodProperties, dependencyImports, validationStatements, deprecatedOperations};
 }

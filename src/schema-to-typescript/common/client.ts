@@ -111,7 +111,8 @@ export function generateClient({
     responseBinaryType,
     binaryTypes,
     jsDocRenderConfig,
-    commentsConfig
+    commentsConfig,
+    deprecatedOperations
 }: {
     commonHttpClientClassName: string;
     commonHttpClientClassOptionsName: string;
@@ -132,6 +133,7 @@ export function generateClient({
     binaryTypes: OpenApiClientCustomizableBinaryType[];
     jsDocRenderConfig: JsDocRenderConfig;
     commentsConfig: CommentsRenderConfig;
+    deprecatedOperations: {[methodAndPath: string]: string};
 }): ClientGenerationResultFile {
     const clientPropertyName = 'client';
     const commonHttpClientImportName = 'commonHttpClient';
@@ -156,22 +158,48 @@ export function generateClient({
         )
     );
 
+    const generatedMethods = generateOperationMethods({
+        paths,
+        commonHttpClientImportName,
+        operationImportPath: clientImportPath,
+        operationsConfig,
+        getModelData,
+        validationContext,
+        binaryTypes,
+        jsDocRenderConfig
+    });
+
+    const clientConstructorOptionsObject = objectExpression([
+        objectProperty(identifier('baseUrl'), stringLiteral(baseUrl ?? servers[0]?.url ?? defaultServerUrl)),
+        objectProperty(identifier('binaryResponseType'), stringLiteral(responseBinaryType)),
+        objectProperty(identifier('errorClass'), identifier(errorTypeName))
+    ]);
+
+    const deprecatedOperationsTotal = {
+        ...deprecatedOperations,
+        ...generatedMethods.deprecatedOperations
+    };
+
+    if (operationsConfig?.showDeprecatedWarnings && Object.keys(deprecatedOperationsTotal).length > 0) {
+        clientConstructorOptionsObject.properties.push(
+            objectProperty(
+                identifier('deprecatedOperations'),
+                objectExpression(
+                    Object.entries(deprecatedOperationsTotal).map(([methodAndPath, operationName]) =>
+                        objectProperty(stringLiteral(methodAndPath), stringLiteral(operationName))
+                    )
+                )
+            )
+        );
+    }
+
     const clientClassBody = classBody([
         makeProtected(
             classProperty(
                 identifier(clientPropertyName),
                 newExpression(
                     memberExpression(identifier(commonHttpClientImportName), identifier(commonHttpClientClassName)),
-                    [
-                        objectExpression([
-                            objectProperty(
-                                identifier('baseUrl'),
-                                stringLiteral(baseUrl ?? servers[0]?.url ?? defaultServerUrl)
-                            ),
-                            objectProperty(identifier('binaryResponseType'), stringLiteral(responseBinaryType)),
-                            objectProperty(identifier('errorClass'), identifier(errorTypeName))
-                        ])
-                    ]
+                    [clientConstructorOptionsObject]
                 )
             )
         ),
@@ -242,16 +270,6 @@ export function generateClient({
     const optionsTypeStatement =
         exportOptionsType === false ? optionsTypeDeclaration : exportNamedDeclaration(optionsTypeDeclaration);
 
-    const generatedMethods = generateOperationMethods({
-        paths,
-        commonHttpClientImportName,
-        operationImportPath: clientImportPath,
-        operationsConfig,
-        getModelData,
-        validationContext,
-        binaryTypes,
-        jsDocRenderConfig
-    });
     clientClassBody.body.push(...generatedMethods.methods);
     extendDependencyImports(dependencyImports, generatedMethods.dependencyImports);
     clientClassBody.body.push(

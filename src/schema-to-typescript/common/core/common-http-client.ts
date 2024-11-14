@@ -49,6 +49,24 @@ export interface CommonHttpClientOptions {
      * Custom validation error handling. Can be used to log errors.
      */
     handleValidationError?: (error: Error) => void;
+    /**
+     * Deprecated operations. Used to warn about deprecated operations.
+     */
+    deprecatedOperations?: {[methodAndPath: string]: string /* Operation name */};
+    /**
+     * Log a deprecation warning.
+     */
+    logDeprecationWarning?(params: {
+        /**
+         * Either operation method name in case if it's not part of the service, or service name and operation method
+         * name separated by a dot.
+         *
+         * Examples: `users.getUserById`, `getSystemConfig`
+         */
+        operationName: string;
+        path: string;
+        method: CommonHttpClientFetchRequest['method'];
+    }): void;
 }
 
 /**
@@ -604,6 +622,12 @@ const formatParameter: Record<CommonHttpClientRequestParameterSerializeStyle, Pa
 };
 
 /**
+ * Stores the deprecation warning state. For every shown deprecation warning, the method and path are stored in order to
+ * avoid showing the same warning appearing multiple times.
+ */
+const deprecationWarningShown: {[methodAndPath: string]: boolean} = {};
+
+/**
  * Common HTTP client. Configurable for different environments.
  */
 export class CommonHttpClient {
@@ -625,6 +649,27 @@ export class CommonHttpClient {
      */
     public getOptions(): CommonHttpClientOptions {
         return this.options;
+    }
+
+    /**
+     * Logs a deprecation warning if the operation is deprecated.
+     */
+    protected logDeprecationWarningIfNecessary(params: {path: string; method: CommonHttpClientFetchRequest['method']}) {
+        const methodAndPath = `${params.method} ${params.path}`;
+        const operationName = this.options.deprecatedOperations?.[methodAndPath];
+        if (!operationName) {
+            return;
+        }
+        if (!deprecationWarningShown[methodAndPath]) {
+            deprecationWarningShown[methodAndPath] = true;
+            if (this.options.logDeprecationWarning) {
+                this.options.logDeprecationWarning({method: params.method, path: params.path, operationName});
+            } else {
+                console.warn(
+                    `Deprecated API call ${this.constructor.name ?? 'ApiClient'}.${operationName}: ${methodAndPath}`
+                );
+            }
+        }
     }
 
     /**
@@ -720,6 +765,7 @@ export class CommonHttpClient {
      * Perform a request.
      */
     public async request(request: CommonHttpClientRequest): Promise<CommonHttpClientFetchResponse> {
+        this.logDeprecationWarningIfNecessary(request);
         try {
             request = await this.preprocessRequest(request);
         } catch (e) {
