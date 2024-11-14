@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.5.0](https://github.com/mdevils/api-typescript-generator/compare/v2.4.24...v2.5.0) (2024-11-14)
+
+
+### Features
+
+* ability to show warnings in case of deprecated operation calls ([b43904f](https://github.com/mdevils/api-typescript-generator/commit/b43904f3a6e1a3616f4c61233de8499b28e00561))
+
 ### [2.4.24](https://github.com/mdevils/api-typescript-generator/compare/v2.4.23...v2.4.24) (2024-09-13)
 
 
