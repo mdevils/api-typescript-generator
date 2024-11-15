@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-import * as fs from 'fs';
-import path from 'path';
+import * as fs from 'node:fs';
+import path from 'node:path';
 import yargs from 'yargs';
 import {hideBin} from 'yargs/helpers';
 import {compareGenerationResult} from './compare-generation-result';
@@ -14,6 +14,7 @@ import {
     openapiToTypescriptClient
 } from '../schema-to-typescript/openapi-to-typescript-client';
 import {loadOpenApiDocument} from '../schemas/load-open-api-document';
+import {makeDir} from '../utils/make-dir';
 import {postprocessFiles} from '../utils/postprocess-files';
 
 async function loadConfig(filename: string): Promise<ApiTypescriptGeneratorConfig> {
@@ -87,7 +88,7 @@ yargs(hideBin(process.argv))
                             }
                             for (const directoryPath of allDirectories) {
                                 try {
-                                    await fs.promises.mkdir(directoryPath, {recursive: true});
+                                    await makeDir(directoryPath);
                                 } catch (e) {
                                     throw new Error(
                                         `Could not create directory "${directoryPath}": ${e instanceof Error ? e.message : e}.`

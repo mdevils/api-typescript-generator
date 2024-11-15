@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import type {ESLint as ESLintClass} from 'eslint';
+import {makeDir} from './make-dir';
 import {
     ClientGenerationResultFile,
     CommonOpenApiClientGeneratorConfigPostprocess
@@ -34,7 +35,7 @@ export async function postprocessFiles({
                     try {
                         await fs.stat(currentDirectory);
                     } catch (e) {
-                        await fs.mkdir(currentDirectory);
+                        await makeDir(currentDirectory);
                         directoriesToRemove.unshift(currentDirectory);
                     }
                     const subDirectory = directoryBits.shift();
