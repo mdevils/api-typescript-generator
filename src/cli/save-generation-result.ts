@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import * as R from 'ramda';
 import {ClientGenerationResultFile} from '../schema-to-typescript/config';
+import {lock} from '../utils/lock';
 
 export async function saveGenerationResult({
     files,
@@ -27,19 +28,21 @@ export async function saveGenerationResult({
         ...files.map(async ({filename, data}) => {
             const fullFilename = path.resolve(outputDirPath, filename);
             try {
-                let exists = false;
-                try {
-                    const existingContent = await fs.promises.readFile(fullFilename, 'utf8');
-                    exists = true;
-                    if (existingContent === data) {
-                        console.log('[no change] ' + fullFilename);
-                        return;
+                await lock(`file:${fullFilename}`, async () => {
+                    let exists = false;
+                    try {
+                        const existingContent = await fs.promises.readFile(fullFilename, 'utf8');
+                        exists = true;
+                        if (existingContent === data) {
+                            console.log('[no change] ' + fullFilename);
+                            return;
+                        }
+                    } catch (e) {
+                        // ok
                     }
-                } catch (e) {
-                    // ok
-                }
-                await fs.promises.writeFile(fullFilename, data);
-                console.log(`[${exists ? 'updated' : 'created'}] ${fullFilename}`);
+                    await fs.promises.writeFile(fullFilename, data);
+                    console.log(`[${exists ? 'updated' : 'created'}] ${fullFilename}`);
+                });
             } catch (e) {
                 throw new Error(`Could not save file "${fullFilename}": ${e instanceof Error ? e.message : e}.`);
             }
