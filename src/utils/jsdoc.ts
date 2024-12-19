@@ -11,12 +11,20 @@ function processDescription(info: string): string {
         .replace(/<\/a>/g, '');
 }
 
+function stringifyExample(example: unknown): string {
+    const result = JSON.stringify(example, null, 2);
+    if (Array.isArray(example)) {
+        return '```\n' + result + '\n```';
+    }
+    return result;
+}
+
 function exampleToString(example: unknown) {
     if (typeof example !== 'string') {
-        return JSON.stringify(example, null, 4);
+        return stringifyExample(example);
     }
     try {
-        return JSON.stringify(JSON.parse(example), null, 2);
+        return stringifyExample(JSON.parse(example));
     } catch (e) {
         return example;
     }
@@ -97,7 +105,11 @@ function renderJsDocTagAsPlainText(tag: JsDocBlockTag): string {
         if (tag.name === 'example') {
             const value = tag.value.replace(/[\n]?$/g, '\n');
             if (value.match(/^[\n]/)) {
-                result += `:\n\`\`\`${value}\`\`\``;
+                if (value.match(/^\n```/)) {
+                    result += `:\n${value}`;
+                } else {
+                    result += `:\n\`\`\`${value}\`\`\``;
+                }
             } else {
                 result += `:${value.replace(/^([^\n]+)\n/, ' "$1":\n```')}\`\`\``;
             }
