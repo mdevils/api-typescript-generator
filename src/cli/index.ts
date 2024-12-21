@@ -66,43 +66,41 @@ yargs(hideBin(process.argv))
         () => configurationFileArgument,
         async (argv) => {
             const config: ApiTypescriptGeneratorConfig = await loadConfig(argv.config);
-            await Promise.all(
-                config.generates.map(async (generateConfig) => {
-                    switch (generateConfig.type) {
-                        case 'openapiClient':
-                            const document = await loadOpenApiDocument(generateConfig.document);
-                            const files = await postprocessFiles({
-                                files: (
-                                    await openapiToTypescriptClient({
-                                        document,
-                                        generateConfig
-                                    })
-                                ).files,
-                                config: generateConfig.postprocess,
-                                outputDirPath: generateConfig.outputDirPath
-                            });
-                            const allDirectories = new Set<string>();
-                            for (const {filename} of files) {
-                                allDirectories.add(path.dirname(path.resolve(generateConfig.outputDirPath, filename)));
+            for (const generateConfig of config.generates) {
+                switch (generateConfig.type) {
+                    case 'openapiClient':
+                        const document = await loadOpenApiDocument(generateConfig.document);
+                        const files = await postprocessFiles({
+                            files: (
+                                await openapiToTypescriptClient({
+                                    document,
+                                    generateConfig
+                                })
+                            ).files,
+                            config: generateConfig.postprocess,
+                            outputDirPath: generateConfig.outputDirPath
+                        });
+                        const allDirectories = new Set<string>();
+                        for (const {filename} of files) {
+                            allDirectories.add(path.dirname(path.resolve(generateConfig.outputDirPath, filename)));
+                        }
+                        for (const directoryPath of allDirectories) {
+                            try {
+                                await fs.promises.mkdir(directoryPath, {recursive: true});
+                            } catch (e) {
+                                throw new Error(
+                                    `Could not create directory "${directoryPath}": ${e instanceof Error ? e.message : e}.`
+                                );
                             }
-                            for (const directoryPath of allDirectories) {
-                                try {
-                                    await fs.promises.mkdir(directoryPath, {recursive: true});
-                                } catch (e) {
-                                    throw new Error(
-                                        `Could not create directory "${directoryPath}": ${e instanceof Error ? e.message : e}.`
-                                    );
-                                }
-                            }
-                            await saveGenerationResult({
-                                files,
-                                outputDirPath: generateConfig.outputDirPath,
-                                cleanupDirectories: getCleanupDirectories(generateConfig)
-                            });
-                            break;
-                    }
-                })
-            );
+                        }
+                        await saveGenerationResult({
+                            files,
+                            outputDirPath: generateConfig.outputDirPath,
+                            cleanupDirectories: getCleanupDirectories(generateConfig)
+                        });
+                        break;
+                }
+            }
         }
     )
     .command(
@@ -111,34 +109,32 @@ yargs(hideBin(process.argv))
         () => configurationFileArgument,
         async (argv) => {
             const config: ApiTypescriptGeneratorConfig = await loadConfig(argv.config);
-            await Promise.all(
-                config.generates.map(async (generateConfig) => {
-                    switch (generateConfig.type) {
-                        case 'openapiClient':
-                            if (
-                                !(await compareGenerationResult({
-                                    files: await postprocessFiles({
-                                        files: (
-                                            await openapiToTypescriptClient({
-                                                document: await loadOpenApiDocument(generateConfig.document),
-                                                generateConfig
-                                            })
-                                        ).files,
-                                        config: generateConfig.postprocess,
-                                        outputDirPath: generateConfig.outputDirPath
-                                    }),
-                                    outputDirPath: generateConfig.outputDirPath,
-                                    cleanupDirectories: getCleanupDirectories(generateConfig)
-                                }))
-                            ) {
-                                console.error(
-                                    'Generated files are not up to date. Please run "api-typescript-generator generate" to update them.'
-                                );
-                                process.exit(1);
-                            }
-                    }
-                })
-            );
+            for (const generateConfig of config.generates) {
+                switch (generateConfig.type) {
+                    case 'openapiClient':
+                        if (
+                            !(await compareGenerationResult({
+                                files: await postprocessFiles({
+                                    files: (
+                                        await openapiToTypescriptClient({
+                                            document: await loadOpenApiDocument(generateConfig.document),
+                                            generateConfig
+                                        })
+                                    ).files,
+                                    config: generateConfig.postprocess,
+                                    outputDirPath: generateConfig.outputDirPath
+                                }),
+                                outputDirPath: generateConfig.outputDirPath,
+                                cleanupDirectories: getCleanupDirectories(generateConfig)
+                            }))
+                        ) {
+                            console.error(
+                                'Generated files are not up to date. Please run "api-typescript-generator generate" to update them.'
+                            );
+                            process.exit(1);
+                        }
+                }
+            }
         }
     )
     .demandCommand(1)
