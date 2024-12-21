@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.6.0](https://github.com/mdevils/api-typescript-generator/compare/v2.5.4...v2.6.0) (2024-12-21)
+
+
+### Features
+
+* remove eslint postprocessing, it is too inefficient ([af454e9](https://github.com/mdevils/api-typescript-generator/commit/af454e91fc6b2f48e32ef2c8aebae9c9e7ed6cf5))
+
 ### [2.5.4](https://github.com/mdevils/api-typescript-generator/compare/v2.5.3...v2.5.4) (2024-12-19)
 
 
