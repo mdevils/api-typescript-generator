@@ -14,7 +14,6 @@ import {
     openapiToTypescriptClient
 } from '../schema-to-typescript/openapi-to-typescript-client';
 import {loadOpenApiDocument} from '../schemas/load-open-api-document';
-import {postprocessFiles} from '../utils/postprocess-files';
 
 async function loadConfig(filename: string): Promise<ApiTypescriptGeneratorConfig> {
     const fullFilename = path.resolve(process.cwd(), filename);
@@ -70,16 +69,12 @@ yargs(hideBin(process.argv))
                 switch (generateConfig.type) {
                     case 'openapiClient':
                         const document = await loadOpenApiDocument(generateConfig.document);
-                        const files = await postprocessFiles({
-                            files: (
-                                await openapiToTypescriptClient({
-                                    document,
-                                    generateConfig
-                                })
-                            ).files,
-                            config: generateConfig.postprocess,
-                            outputDirPath: generateConfig.outputDirPath
-                        });
+                        const files = (
+                            await openapiToTypescriptClient({
+                                document,
+                                generateConfig
+                            })
+                        ).files;
                         const allDirectories = new Set<string>();
                         for (const {filename} of files) {
                             allDirectories.add(path.dirname(path.resolve(generateConfig.outputDirPath, filename)));
@@ -114,16 +109,12 @@ yargs(hideBin(process.argv))
                     case 'openapiClient':
                         if (
                             !(await compareGenerationResult({
-                                files: await postprocessFiles({
-                                    files: (
-                                        await openapiToTypescriptClient({
-                                            document: await loadOpenApiDocument(generateConfig.document),
-                                            generateConfig
-                                        })
-                                    ).files,
-                                    config: generateConfig.postprocess,
-                                    outputDirPath: generateConfig.outputDirPath
-                                }),
+                                files: (
+                                    await openapiToTypescriptClient({
+                                        document: await loadOpenApiDocument(generateConfig.document),
+                                        generateConfig
+                                    })
+                                ).files,
                                 outputDirPath: generateConfig.outputDirPath,
                                 cleanupDirectories: getCleanupDirectories(generateConfig)
                             }))

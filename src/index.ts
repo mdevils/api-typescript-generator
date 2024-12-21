@@ -9,8 +9,7 @@ export type {
     OpenApiDocumentPatchTags,
     CommonOpenApiClientGeneratorConfigDocumentPatch,
     OpenApiDocumentPatchAllSchemas,
-    OpenApiDocumentPatchDocument,
-    CommonOpenApiClientGeneratorConfigPostprocess
+    OpenApiDocumentPatchDocument
 } from './schema-to-typescript/config';
 export type {JsDocBlockTag, JsDocBlock} from './utils/jsdoc';
 export type {FilenameFormat, EntityNameCase} from './utils/string-utils';

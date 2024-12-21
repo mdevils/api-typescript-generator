@@ -18,7 +18,6 @@ Common configuration for the API client generators.
 
 - [document](index.CommonOpenApiClientGeneratorConfig.md#document)
 - [outputDirPath](index.CommonOpenApiClientGeneratorConfig.md#outputdirpath)
-- [postprocess](index.CommonOpenApiClientGeneratorConfig.md#postprocess)
 
 ## Properties
 
@@ -35,11 +34,3 @@ ___
 • **outputDirPath**: `string`
 
 Output directory for the generated client files.
-
-___
-
-### postprocess
-
-• `Optional` **postprocess**: [`CommonOpenApiClientGeneratorConfigPostprocess`](index.CommonOpenApiClientGeneratorConfigPostprocess.md)
-
-Configuration for the generated client files.

@@ -154,17 +154,6 @@ export interface CommonOpenApiClientGeneratorConfigDocument {
 }
 
 /**
- * Configuration for postprocessing the generated files.
- */
-export interface CommonOpenApiClientGeneratorConfigPostprocess {
-    /**
-     * If true, runs ESLint on the generated files. ESlint should be installed in the project and the configuration
-     * should be present. This postprocess step can take a long time for large schemas.
-     */
-    eslint?: boolean;
-}
-
-/**
  * Common configuration for the API client generators.
  */
 export interface CommonOpenApiClientGeneratorConfig {
@@ -176,10 +165,6 @@ export interface CommonOpenApiClientGeneratorConfig {
      * Output directory for the generated client files.
      */
     outputDirPath: string;
-    /**
-     * Configuration for the generated client files.
-     */
-    postprocess?: CommonOpenApiClientGeneratorConfigPostprocess;
 }
 
 export interface ClientGenerationResult {
