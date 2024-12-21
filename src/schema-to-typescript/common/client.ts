@@ -176,7 +176,7 @@ export function generateClient({
             logicalExpression(
                 '??',
                 memberExpression(memberExpression(thisExpression(), identifier('constructor')), identifier('name')),
-                stringLiteral(name)
+                stringLiteral('name')
             )
         ),
         objectProperty(identifier('baseUrl'), stringLiteral(baseUrl ?? servers[0]?.url ?? defaultServerUrl)),
