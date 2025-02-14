@@ -1,7 +1,8 @@
+import {shouldRetryOnError} from './pet-service.test';
 import {checkReponseMediaType, CommonHttpClientError} from './petstore-api-client/core/common-http-client';
 import {PetStoreApiClient} from './petstore-api-client/pet-store-api-client';
 
-const client = new PetStoreApiClient({baseUrl: 'https://petstore.swagger.io/v2'});
+const client = new PetStoreApiClient({baseUrl: 'https://petstore.swagger.io/v2', shouldRetryOnError});
 
 describe('store-service', () => {
     it('should get inventory', async () => {

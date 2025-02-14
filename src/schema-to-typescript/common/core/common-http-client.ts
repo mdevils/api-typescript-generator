@@ -71,6 +71,10 @@ export interface CommonHttpClientOptions {
         path: string;
         method: CommonHttpClientFetchRequest['method'];
     }): void;
+    /**
+     * Determine whether to retry on error.
+     */
+    shouldRetryOnError?: (error: Error, attemptNumber: number) => boolean;
 }
 
 /**
@@ -825,41 +829,51 @@ export class CommonHttpClient {
             redirect: redirect ?? 'follow',
             body: this.getRequestBody(request)
         };
-        let fetchResponse: CommonHttpClientFetchResponse;
-        try {
-            if (this.options.fetch) {
-                fetchResponse = await this.options.fetch(url, fetchRequest);
-            } else {
-                fetchResponse = await this.fetch(url, fetchRequest);
-            }
-        } catch (e) {
-            throw new this.options.errorClass(url, fetchRequest, undefined, this.options, getErrorMessage(e));
-        }
-        if (this.options.preprocessFetchResponse) {
+        let attemptNumber = 1;
+        for (;;) {
             try {
-                fetchResponse = await this.options.preprocessFetchResponse(fetchResponse, fetchRequest);
-            } catch (e) {
-                throw new this.options.errorClass(
-                    url,
-                    fetchRequest,
-                    fetchResponse,
-                    this.options,
-                    `preprocessFetchResponse error: ${getErrorMessage(e)}`
-                );
+                let fetchResponse: CommonHttpClientFetchResponse;
+                try {
+                    if (this.options.fetch) {
+                        fetchResponse = await this.options.fetch(url, fetchRequest);
+                    } else {
+                        fetchResponse = await this.fetch(url, fetchRequest);
+                    }
+                } catch (e) {
+                    throw new this.options.errorClass(url, fetchRequest, undefined, this.options, getErrorMessage(e));
+                }
+                if (this.options.preprocessFetchResponse) {
+                    try {
+                        fetchResponse = await this.options.preprocessFetchResponse(fetchResponse, fetchRequest);
+                    } catch (e) {
+                        throw new this.options.errorClass(
+                            url,
+                            fetchRequest,
+                            fetchResponse,
+                            this.options,
+                            `preprocessFetchResponse error: ${getErrorMessage(e)}`
+                        );
+                    }
+                }
+                if (!fetchResponse.ok) {
+                    throw new this.options.errorClass(
+                        url,
+                        fetchRequest,
+                        fetchResponse,
+                        this.options,
+                        this.options.formatHttpErrorMessage
+                            ? this.options.formatHttpErrorMessage(fetchResponse, fetchRequest)
+                            : `HTTP Error ${request.method} ${url.toString()} ${fetchResponse.status} (${fetchResponse.statusText})`
+                    );
+                }
+                return fetchResponse;
+            } catch (error) {
+                if (!this.options.shouldRetryOnError?.(error as Error, attemptNumber)) {
+                    throw error;
+                }
+                attemptNumber++;
             }
         }
-        if (!fetchResponse.ok) {
-            throw new this.options.errorClass(
-                url,
-                fetchRequest,
-                fetchResponse,
-                this.options,
-                this.options.formatHttpErrorMessage
-                    ? this.options.formatHttpErrorMessage(fetchResponse, fetchRequest)
-                    : `HTTP Error ${request.method} ${url.toString()} ${fetchResponse.status} (${fetchResponse.statusText})`
-            );
-        }
-        return fetchResponse;
     }
 
     /**

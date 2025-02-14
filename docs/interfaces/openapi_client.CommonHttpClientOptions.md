@@ -21,6 +21,7 @@ Options for the common HTTP client.
 - [headers](openapi_client.CommonHttpClientOptions.md#headers)
 - [preprocessFetchResponse](openapi_client.CommonHttpClientOptions.md#preprocessfetchresponse)
 - [preprocessRequest](openapi_client.CommonHttpClientOptions.md#preprocessrequest)
+- [shouldRetryOnError](openapi_client.CommonHttpClientOptions.md#shouldretryonerror)
 
 ### Methods
 
@@ -204,6 +205,29 @@ Preprocess the request before sending it.
 ##### Returns
 
 `Promise`\<[`CommonHttpClientRequest`](../modules/openapi_client.md#commonhttpclientrequest)\>
+
+___
+
+### shouldRetryOnError
+
+• `Optional` **shouldRetryOnError**: (`error`: `Error`, `attemptNumber`: `number`) => `boolean`
+
+#### Type declaration
+
+▸ (`error`, `attemptNumber`): `boolean`
+
+Determine whether to retry on error.
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `error` | `Error` |
+| `attemptNumber` | `number` |
+
+##### Returns
+
+`boolean`
 
 ## Methods
 

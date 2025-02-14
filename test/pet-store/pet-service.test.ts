@@ -1,5 +1,15 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import {CommonHttpClientFetchRequest} from './petstore-api-client/core/common-http-client';
+import {CommonHttpClientError, CommonHttpClientFetchRequest} from './petstore-api-client/core/common-http-client';
+
+export function shouldRetryOnError(error: Error, attemptNumber: number) {
+    if (attemptNumber >= 3) {
+        return false;
+    }
+    return (
+        error instanceof CommonHttpClientError &&
+        (!error.response || (error.response.status >= 500 && error.response.status < 600))
+    );
+}
 
 describe('pet-service', () => {
     beforeEach(() => {
@@ -8,7 +18,7 @@ describe('pet-service', () => {
 
     it('should show a deprecation warning', () => {
         const {PetStoreApiClient} = require('./petstore-api-client/pet-store-api-client');
-        const client = new PetStoreApiClient({baseUrl: 'https://petstore.swagger.io/v2'});
+        const client = new PetStoreApiClient({baseUrl: 'https://petstore.swagger.io/v2', shouldRetryOnError});
         const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
         client.pet.findPetsByTags({tags: ['tag']});
         client.pet.findPetsByTags({tags: ['tag']});
@@ -22,6 +32,7 @@ describe('pet-service', () => {
         const {PetStoreApiClient} = require('./petstore-api-client/pet-store-api-client');
         const client = new PetStoreApiClient({
             baseUrl: 'https://petstore.swagger.io/v2',
+            shouldRetryOnError,
             logDeprecationWarning(params: {
                 operationName: string;
                 path: string;
