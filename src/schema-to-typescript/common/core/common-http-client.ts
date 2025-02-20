@@ -74,7 +74,7 @@ export interface CommonHttpClientOptions {
     /**
      * Determine whether to retry on error.
      */
-    shouldRetryOnError?: (error: Error, attemptNumber: number) => boolean;
+    shouldRetryOnError?: (error: Error, attemptNumber: number) => boolean | Promise<boolean>;
 }
 
 /**
@@ -868,7 +868,7 @@ export class CommonHttpClient {
                 }
                 return fetchResponse;
             } catch (error) {
-                if (!this.options.shouldRetryOnError?.(error as Error, attemptNumber)) {
+                if (!(await this.options.shouldRetryOnError?.(error as Error, attemptNumber))) {
                     throw error;
                 }
                 attemptNumber++;

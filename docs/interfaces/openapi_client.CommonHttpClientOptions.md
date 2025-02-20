@@ -210,11 +210,11 @@ ___
 
 ### shouldRetryOnError
 
-• `Optional` **shouldRetryOnError**: (`error`: `Error`, `attemptNumber`: `number`) => `boolean`
+• `Optional` **shouldRetryOnError**: (`error`: `Error`, `attemptNumber`: `number`) => `boolean` \| `Promise`\<`boolean`\>
 
 #### Type declaration
 
-▸ (`error`, `attemptNumber`): `boolean`
+▸ (`error`, `attemptNumber`): `boolean` \| `Promise`\<`boolean`\>
 
 Determine whether to retry on error.
 
@@ -227,7 +227,7 @@ Determine whether to retry on error.
 
 ##### Returns
 
-`boolean`
+`boolean` \| `Promise`\<`boolean`\>
 
 ## Methods
 
