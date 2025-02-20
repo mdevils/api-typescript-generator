@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.7.1](https://github.com/mdevils/api-typescript-generator/compare/v2.7.0...v2.7.1) (2025-02-20)
+
+
+### Bug Fixes
+
+* support promise-response for shouldRetryOnError ([684efc1](https://github.com/mdevils/api-typescript-generator/commit/684efc10d54083e0754460b4b44da873e9d42585))
+
 ## [2.7.0](https://github.com/mdevils/api-typescript-generator/compare/v2.6.0...v2.7.0) (2025-02-14)
 
 
