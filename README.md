@@ -103,7 +103,7 @@ npm run openapi-codegen
 ## Basic Usage
 
 ```ts
-import {PetStoreApiClient} from './petstore-api-client';
+import {PetStoreApiClient, PetStoreApiClientError} from './petstore-api-client';
 
 const client = new PetStoreApiClient();
 
@@ -117,8 +117,8 @@ async function getPets() {
 try {
     await client.pet.addPet({/* pet data */});
 } catch (error) {
-    if (error instanceof client.HttpClientError) {
-        console.error('API Error:', error.status, error.message);
+    if (error instanceof PetStoreApiClientError) {
+        console.error('API Error:', error.response.status, error.message);
     }
 }
 ```
