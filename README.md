@@ -1,32 +1,56 @@
 # OpenAPI Typescript Client Generator
 
-Generates OpenAPI client for TypeScript. Extremely configurable.
+A powerful, highly customizable TypeScript client generator for OpenAPI specifications. Build type-safe API clients for any environment with unprecedented control over generated code.
 
 ## Features
 
-1. Generates TypeScript models for all the schemas in the OpenAPI document in a form of interfaces and type aliases.
-2. Generates TypeScript services for all the operations in the OpenAPI document.
-3. Generates a client class that combines all the services.
-4. Uses `fetch` API for making HTTP requests by default, but can be configured to use any other HTTP client.
-5. May generate validation for the API responses if configured.
+- **Fully-typed**: Generates TypeScript models for all schemas and operations
+- **Environment-agnostic**: Generated clients work everywhere - browsers, Node.js, Sandbox environments, and more
+- **Validation support**: Optional runtime validation for requests and responses
+- **Highly customizable**: Control everything from naming conventions to file structure
+- **Production-ready**: Used to build enterprise-grade API clients for Atlassian products
+- **Flexible schema loading**: Load schemas from YAML or JSON, locally or remotely
+- **Modern specification support**: Full support for OpenAPI 3.0 and 3.1
+
+## Real-world Examples
+
+Built by the team behind production API clients:
+- `@resolution/jira-api-client` - Fully-typed Jira API client
+- `@resolution/confluence-api-client` - Fully-typed Confluence API client
+
+These clients support multiple environments (Atlassian Connect Server/Client, Atlassian Forge Backend/Frontend) from a single codebase - showcasing the flexibility of this generator.
+
+## Comparison with Alternatives
+
+| Feature                     | api-typescript-generator | openapi-typescript | openapi-ts + openapi-fetch                 |
+|-----------------------------|--------------------------|--------------------|--------------------------------------------|
+| Type Generation             | ✅                        | ✅                  | ✅                                          |
+| Client Generation           | ✅                        | ✅                  | ❌ (`openapi-fetch` can use generated types) |
+| Customizable File Structure | ✅                        | ❌                  | N/A                                        |
+| Custom Naming Conventions   | ✅                        | ❌                  | ❌                                          |
+| JSDoc Generation            | ✅                        | ✅                  | ✅                                          |
+| JSDoc Customization         | ✅                        | ❌                  | ❌                                          |
+| Validation                  | ✅ (configurable)         | ❌                  | ❌                                          |
+| Environment-agnostic        | ✅                        | ✅                  | ✅                                          |
+| No runtime dependencies     | ✅                        | ❌                  | ❌                                           |
 
 ## Setup
 
-Install using npm
+Install using npm:
 
 ```shell
 npm add --save-dev api-typescript-generator 
 ```
 
-Or using yarn
+Or using yarn:
 
 ```shell
 yarn add --dev api-typescript-generator
 ```
 
-## Configuring
+## Configuration
 
-Create a `api-typescript-generator.config.ts` file in the root of your project.
+Create a `api-typescript-generator.config.ts` file in your project root:
 
 ```ts
 import path from 'path';
@@ -60,13 +84,11 @@ const configuration: ApiTypescriptGeneratorConfig = {
 export default configuration;
 ```
 
-Add the following script to your `package.json`:
+Add a script to your `package.json`:
 
-```js
+```json
 {
-  // ...
   "scripts": {
-    // ...
     "openapi-codegen": "api-typescript-generator generate api-typescript-generator.config.ts"
   }
 }
@@ -78,61 +100,165 @@ Run the script:
 npm run openapi-codegen
 ```
 
-Or using yarn:
-
-```shell
-yarn openapi-codegen
-```
-
-By default it generates:
-
-1. Models for all the schemas in the OpenAPI document. Stored at `models` directory by default.
-2. Services for all the operations in the OpenAPI document. Stored at `services` directory by default.
-3. A client class that combines all the services. Stored at the root of the output directory by default.
-4. Core classes for handling HTTP requests and responses. Stored at `core` directory by default.
-
-## Usage
-
-The generated client can be used as follows:
+## Basic Usage
 
 ```ts
 import {PetStoreApiClient} from './petstore-api-client';
 
-async function testApiClient() {
-    const apiClient = new PetStoreApiClient();
-    console.log(await client.store.getInventory());
+const client = new PetStoreApiClient();
+
+// Type-safe API calls
+async function getPets() {
+    const pets = await client.pet.findByStatus({status: 'available'});
+    console.log(pets); // Fully typed response
 }
 
-testApiClient().catch(console.error);
+// Error handling with typed errors
+try {
+    await client.pet.addPet({/* pet data */});
+} catch (error) {
+    if (error instanceof client.HttpClientError) {
+        console.error('API Error:', error.status, error.message);
+    }
+}
 ```
 
-## What is configurable?
+## Advanced Usage
 
-1. Validation of the API responses. See [validation](docs/interfaces/openapi_client.OpenApiClientGeneratorConfig.md#validation).
-2. Default base URL for the API. See [client.baseUrl](docs/interfaces/openapi_client.OpenApiClientGeneratorConfigClient.md#baseUrl).
-3. Leading and trailing comments for the files. See [comments](docs/interfaces/openapi_client.OpenApiClientGeneratorConfigComments.md).
-4. File naming conventions. I.e. [models.filenameFormat](docs/interfaces/openapi_client.OpenApiClientGeneratorConfigModels.md#filenameFormat).
-5. Output directory structure. I.e. [models.relativeDirPath](docs/interfaces/openapi_client.OpenApiClientGeneratorConfigModels.md#relativeDirPath).
-6. JSDoc generation. I.e. [models.generateJsDoc](docs/interfaces/openapi_client.OpenApiClientGeneratorConfigModels.md#generateJsDoc).
-7. Many more. See the documentation below.
+### Validation with Zod
+
+Why you might want to enable validation:
+
+- OpenAPI specifications can be incomplete or incorrect.
+- Runtime validation can catch issues that static type checking cannot.
+- Validation can help ensure that your API client behaves as expected.
+
+```ts
+// In config:
+validation: {
+    library: 'zod'
+}
+
+// Option 1. Throw validation errors
+const client = new PetStoreApiClient();
+const result = await client.pet.getPetById({petId: '123'});
+// In case of validation error, an exception will be thrown.
+
+// Option 2. Handle validation errors separately (i.e. send to Sentry)
+const client = new PetStoreApiClient({
+    handleValidationError(error) {
+        Sentry.captureException(error);
+    }
+});
+const result = await client.pet.getPetById({petId: '123'});
+// In case of validation error, the error will be sent to Sentry, and the execution will continue.
+```
+
+### Custom HTTP Client
+
+```ts
+const client = new PetStoreApiClient({
+    fetch: customFetchImplementation,
+    baseUrl: 'https://custom-petstore.example.com',
+    middlewares: [
+        request => {
+            request.headers['X-Custom-Header'] = 'value';
+            return request;
+        }
+    ]
+});
+```
+
+### Retry Logic
+
+You can implement custom retry logic for your API client. This is useful for handling transient errors or rate limiting.
+
+```ts
+const client = new PetStoreApiClient({
+    shouldRetryOnError: (error, attempt) => {
+        if (error.status >= 500 && attempt < 3) {
+            return new Promise((resolve) => {
+                setTimeout(() => resolve(true), 100 * attempt);
+            });
+        }
+        return false;
+    }
+});
+```
+
+### Deprecated API Operations
+
+In case if an operation is marked as deprecated in OpenAPI spec, the generator will add a `@deprecated` tag to the generated method.
+When calling a deprecated method, a warning will be logged to the console.
+You can customize the logging behavior by providing a custom `logDeprecationWarning` function in the client configuration.
+
+```ts
+const client = new PetStoreApiClient({
+    logDeprecationWarning: ({
+       operationName,
+       path,
+       method
+    }) => {
+        Sentry.captureMessage(`Deprecated API call: ${operationName} (${method.toUpperCase()} ${path})`);
+    }
+});
+```
+
+## Customization Options
+
+The generator offers unmatched customization:
+
+1. **File Structure Control**
+    - Custom directory structure
+    - Configurable file naming patterns
+    - Grouped or flat output
+
+2. **Naming Conventions**
+    - Model/interface naming patterns
+    - Property naming transformation
+    - Service method naming
+
+3. **Documentation**
+    - JSDoc generation with wordwrap control
+    - Custom section ordering
+    - Description formatting
+    - Custom tags and annotations
+
+4. **Client Features**
+    - Response validation
+    - Error handling strategies
+    - Binary data processing
+    - Custom fetch implementation
+    - Custom request/response interceptors
+    - Custom retry logic
 
 ## Documentation
 
-The most important interface for now would be the [OpenApiClientGeneratorConfig](docs/interfaces/openapi_client.OpenApiClientGeneratorConfig.md) interface. It contains all the configuration options for the OpenAPI Client Generator.
+For full configuration options, see:
 
-Types are exported as part of three modules, depending on the area of application:
+- [OpenApiClientGeneratorConfig](docs/interfaces/openapi_client.OpenApiClientGeneratorConfig.md) - Main configuration interface
+- [Models Configuration](docs/interfaces/openapi_client.OpenApiClientGeneratorConfigModels.md) - Model generation options
+- [Services Configuration](docs/interfaces/openapi_client.OpenApiClientGeneratorConfigServices.md) - Service generation options
+- [Validation Configuration](docs/interfaces/openapi_client.OpenApiClientGeneratorConfigValidation.md) - Validation options
 
-1. [`api-typescript-generator`](docs/modules/index.md) - The main module that exports the common API Generator Configuration types.
-2. [`api-typescript-generator/openapi-client`](docs/modules/openapi_client.md) - The module that exports the OpenAPI Client Generator Configuration types.
-3. [`api-typescript-generator/openapi`](docs/modules/openapi.md) - The module that exports the OpenAPI Document types.
+## Modules
 
-At the moment only types are exported to be used with CLI. Callable API is planned for the future.
+Types are exported from three modules:
 
-## Collaborators
+1. [`api-typescript-generator`](docs/modules/index.md) - Common API Generator types
+2. [`api-typescript-generator/openapi-client`](docs/modules/openapi_client.md) - OpenAPI Client types
+3. [`api-typescript-generator/openapi`](docs/modules/openapi.md) - OpenAPI Document types
 
- * [Mikhail Davydov](https://github.com/azproduction)
+## Contributors
+
+* [Marat Dulin](https://github.com/mdevils)
+* [Mikhail Davydov](https://github.com/azproduction)
 
 ## References
 
 1. [OpenAPI Specification](https://swagger.io/specification/)
 2. [JSON Schema](https://json-schema.org/)
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
