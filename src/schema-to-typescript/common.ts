@@ -46,6 +46,7 @@ import {
     OpenApiSchema,
     OpenApiSchemaPrimitiveValue
 } from '../schemas/common';
+import {cleanupSchema} from '../utils/cleanup-schema';
 import {attachJsDocComment, extractJsDoc, JsDocBlock, JsDocRenderConfig, renderJsDoc} from '../utils/jsdoc';
 import {applyEntityNameCase} from '../utils/string-utils';
 import {simplifyIntersectionTypeIfPossible, simplifyUnionTypeIfPossible} from '../utils/type-utils';
@@ -65,7 +66,7 @@ export interface GenerateSchemaTypeParams {
  * @see https://www.asyncapi.com/docs/specifications/2.0.0#dataTypeFormat
  */
 export function generateSchemaType({
-    schema,
+    schema: originalSchema,
     getTypeName,
     expand = false,
     processJsDoc,
@@ -73,6 +74,7 @@ export function generateSchemaType({
     getBinaryType,
     jsDocRenderConfig
 }: GenerateSchemaTypeParams): TSType {
+    const schema = cleanupSchema(originalSchema);
     const commonSchemaGenerationOptions = {
         getTypeName,
         getBinaryType,

@@ -11,6 +11,7 @@ A powerful, highly customizable TypeScript client generator for OpenAPI specific
 - **Production-ready**: Used to build enterprise-grade API clients for Atlassian products
 - **Flexible schema loading**: Load schemas from YAML or JSON, locally or remotely
 - **Modern specification support**: Full support for OpenAPI 3.0 and 3.1
+- **Zero runtime dependencies**: Generated code has no external dependencies unless explicitly configured
 
 ## Real-world Examples
 

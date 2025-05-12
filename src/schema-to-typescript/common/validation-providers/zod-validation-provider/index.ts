@@ -31,6 +31,7 @@ import {
 } from '@babel/types';
 import * as R from 'ramda';
 import {extendSchema, OpenApiSchema} from '../../../../schemas/common';
+import {cleanupSchema} from '../../../../utils/cleanup-schema';
 import {addDependencyImport, DependencyImports} from '../../../../utils/dependencies';
 import {isJsonMediaType} from '../../../../utils/media-types';
 import {objectPropertyKey, valueToAstExpression} from '../../../common';
@@ -121,7 +122,8 @@ export class ZodValidationProvider extends ValidationProvider {
     generateSchema(schema: OpenApiSchema, context: ValidationProviderContext): ResultWithDependencyImports<Expression> {
         return this.withDependencyImports(this.generateSchemaItem(schema, context));
     }
-    protected generateSchemaItem(schema: OpenApiSchema, context: ValidationProviderContext): Expression {
+    protected generateSchemaItem(originalSchema: OpenApiSchema, context: ValidationProviderContext): Expression {
+        const schema = cleanupSchema(originalSchema);
         if (schema === true) {
             return zCall('unknown', []);
         }
