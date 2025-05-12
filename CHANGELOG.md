@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.7.3](https://github.com/mdevils/api-typescript-generator/compare/v2.7.2...v2.7.3) (2025-05-12)
+
+
+### Bug Fixes
+
+* handle enums with booleans ([4096ac0](https://github.com/mdevils/api-typescript-generator/commit/4096ac04b557582a6ce72295fb8feb48c5fac21a))
+
 ### [2.7.2](https://github.com/mdevils/api-typescript-generator/compare/v2.7.1...v2.7.2) (2025-04-17)
 
 
