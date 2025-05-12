@@ -1,3 +1,4 @@
+import {OpenApiSchemaFieldPathItem} from './common';
 import {generateClient} from './common/client';
 import {
     generateCommonHttpClient,
@@ -462,7 +463,7 @@ export type GenerateModelJsDoc = (params: {
     /**
      * Path to the field in the schema. Empty if the schema is a model schema.
      */
-    fieldPath: string[];
+    fieldPath: OpenApiSchemaFieldPathItem[];
 }) => JsDocBlock;
 
 /**

@@ -39,7 +39,13 @@ import {attachJsDocComment, extractJsDoc, JsDocRenderConfig, renderJsDoc} from '
 import {getRelativeImportPath} from '../../utils/paths';
 import {applyEntityNameCase, formatFilename} from '../../utils/string-utils';
 import {ExtractedTags} from '../../utils/tags';
-import {attachTypeAnnotation, CommentsRenderConfig, generateSchemaType, renderTypeScript} from '../common';
+import {
+    attachTypeAnnotation,
+    CommentsRenderConfig,
+    generateSchemaType,
+    OpenApiSchemaFieldPathItem,
+    renderTypeScript
+} from '../common';
 import {ClientGenerationResultFile} from '../config';
 import {
     GenerateModelJsDoc,
@@ -89,7 +95,7 @@ function generateTypeExport({
             extendDependenciesAndGetResult(generateBinaryType(binaryTypes, importPath), dependencyImports),
         processJsDoc:
             generateJsDoc &&
-            ((jsdoc, schema, path: string[]) =>
+            ((jsdoc, schema, path: OpenApiSchemaFieldPathItem[]) =>
                 generateJsDoc({
                     suggestedJsDoc: jsdoc,
                     schema,

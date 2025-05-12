@@ -51,13 +51,20 @@ import {attachJsDocComment, extractJsDoc, JsDocBlock, JsDocRenderConfig, renderJ
 import {applyEntityNameCase} from '../utils/string-utils';
 import {simplifyIntersectionTypeIfPossible, simplifyUnionTypeIfPossible} from '../utils/type-utils';
 
+export const stringIndexSignature = Symbol('stringIndexSignature');
+
+/**
+ * Path item used to reference a path to a field in the schema.
+ */
+export type OpenApiSchemaFieldPathItem = string | typeof stringIndexSignature;
+
 export interface GenerateSchemaTypeParams {
     schema: OpenApiSchema;
     getTypeName: (name: string, schema: OpenApiSchema) => string;
     getBinaryType: () => TSType;
     expand?: boolean;
-    processJsDoc?: (jsdoc: JsDocBlock, entity: OpenApiSchema, path: string[]) => JsDocBlock;
-    processJsDocPath?: string[];
+    processJsDoc?: (jsdoc: JsDocBlock, entity: OpenApiSchema, path: OpenApiSchemaFieldPathItem[]) => JsDocBlock;
+    processJsDocPath?: OpenApiSchemaFieldPathItem[];
     jsDocRenderConfig?: JsDocRenderConfig;
 }
 
@@ -234,16 +241,25 @@ export function generateSchemaType({
             if (typeof additionalProperties === 'object' && additionalProperties.title) {
                 keyName = applyEntityNameCase(additionalProperties.title, 'camelCase');
             }
+            let jsdoc = extractJsDoc(additionalProperties);
+            const currentProcessJsDocPath = (processJsDocPath ?? []).concat(stringIndexSignature);
+            if (processJsDoc) {
+                jsdoc = processJsDoc(jsdoc, additionalProperties, currentProcessJsDocPath);
+            }
             objectIntersection.push(
                 tsTypeLiteral([
                     attachJsDocComment(
                         tsIndexSignature(
                             [attachTypeAnnotation(identifier(keyName), tsTypeAnnotation(tsStringKeyword()))],
                             tsTypeAnnotation(
-                                generateSchemaType({schema: additionalProperties, ...commonSchemaGenerationOptions})
+                                generateSchemaType({
+                                    schema: additionalProperties,
+                                    ...commonSchemaGenerationOptions,
+                                    processJsDocPath: currentProcessJsDocPath
+                                })
                             )
                         ),
-                        renderJsDoc(extractJsDoc(additionalProperties), jsDocRenderConfig)
+                        renderJsDoc(jsdoc, jsDocRenderConfig)
                     )
                 ])
             );

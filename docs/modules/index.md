@@ -24,6 +24,11 @@
 - [OpenApiDocumentPatchPathItem](index.md#openapidocumentpatchpathitem)
 - [OpenApiDocumentPatchSchema](index.md#openapidocumentpatchschema)
 - [OpenApiDocumentPatchTags](index.md#openapidocumentpatchtags)
+- [OpenApiSchemaFieldPathItem](index.md#openapischemafieldpathitem)
+
+### Variables
+
+- [stringIndexSignature](index.md#stringindexsignature)
 
 ## Type Aliases
 
@@ -174,3 +179,17 @@ Callback to patch tags.
 ##### Returns
 
 [`OpenApiTag`](../interfaces/openapi.OpenApiTag.md)[] \| `Promise`\<[`OpenApiTag`](../interfaces/openapi.OpenApiTag.md)[]\>
+
+___
+
+### OpenApiSchemaFieldPathItem
+
+Ƭ **OpenApiSchemaFieldPathItem**: `string` \| typeof [`stringIndexSignature`](index.md#stringindexsignature)
+
+Path item used to reference a path to a field in the schema.
+
+## Variables
+
+### stringIndexSignature
+
+• `Const` **stringIndexSignature**: typeof [`stringIndexSignature`](index.md#stringindexsignature)

@@ -213,7 +213,7 @@ ___
 
 ### GenerateModelJsDoc
 
-Ƭ **GenerateModelJsDoc**: (`params`: \{ `fieldPath`: `string`[] ; `schema`: [`OpenApiSchema`](openapi.md#openapischema) ; `schemaName`: `string` ; `suggestedJsDoc`: [`JsDocBlock`](../interfaces/index.JsDocBlock.md)  }) => [`JsDocBlock`](../interfaces/index.JsDocBlock.md)
+Ƭ **GenerateModelJsDoc**: (`params`: \{ `fieldPath`: [`OpenApiSchemaFieldPathItem`](index.md#openapischemafieldpathitem)[] ; `schema`: [`OpenApiSchema`](openapi.md#openapischema) ; `schemaName`: `string` ; `suggestedJsDoc`: [`JsDocBlock`](../interfaces/index.JsDocBlock.md)  }) => [`JsDocBlock`](../interfaces/index.JsDocBlock.md)
 
 #### Type declaration
 
@@ -226,7 +226,7 @@ Callback for generating the JSDoc of a model.
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `params` | `Object` | - |
-| `params.fieldPath` | `string`[] | Path to the field in the schema. Empty if the schema is a model schema. |
+| `params.fieldPath` | [`OpenApiSchemaFieldPathItem`](index.md#openapischemafieldpathitem)[] | Path to the field in the schema. Empty if the schema is a model schema. |
 | `params.schema` | [`OpenApiSchema`](openapi.md#openapischema) | OpenAPISchema of the model schema (if fieldPath is empty) or the field schema. |
 | `params.schemaName` | `string` | Name of the schema. |
 | `params.suggestedJsDoc` | [`JsDocBlock`](../interfaces/index.JsDocBlock.md) | Suggested JSDoc block. Used by default if the callback is not specified. |
