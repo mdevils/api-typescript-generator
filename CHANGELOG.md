@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.8.0](https://github.com/mdevils/api-typescript-generator/compare/v2.7.4...v2.8.0) (2025-08-12)
+
+
+### Features
+
+* add processError option ([a72c143](https://github.com/mdevils/api-typescript-generator/commit/a72c1436981453f8efbaa54033fc54a7430654ab))
+
 ### [2.7.4](https://github.com/mdevils/api-typescript-generator/compare/v2.7.3...v2.7.4) (2025-05-12)
 
 
