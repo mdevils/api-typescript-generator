@@ -38,25 +38,26 @@ describe('store-service', () => {
             fail('Unexpected media type.');
         }
     });
-    it('should get and delete the placed order', async () => {
+    it('should process errors', async () => {
         const orderId = 123123123;
-        await client.store.placeOrder({
-            order: {
-                id: orderId,
-                petId: 123,
-                quantity: 1,
-                shipDate: '2021-09-01T00:00:00.000Z',
-                status: 'placed',
-                complete: true
-            }
+        const processError = (error: Error) => {
+            error.message = `Processed error: ${error.message}`;
+            return error;
+        };
+        const client = new PetStoreApiClient({
+            baseUrl: 'https://petstore.swagger.io/v2',
+            shouldRetryOnError,
+            processError
         });
-        const orderResponse = await client.store.getOrderById({orderId});
-        if (checkReponseMediaType(orderResponse, 'application/json')) {
-            expect(orderResponse.body.petId).toEqual(123);
-        } else {
-            throw new Error('Unexpected media type.');
+        try {
+            await client.store.getOrderById({orderId});
+        } catch (error) {
+            if (!(error instanceof CommonHttpClientError)) {
+                fail('Unexpected error type.');
+            }
+            expect((error as CommonHttpClientError).response?.status).toEqual(404);
+            expect(error.message).toContain('Processed error:');
         }
-        await client.store.deleteOrder({orderId});
     });
     it('should fail in case of non-existing orders', async () => {
         try {

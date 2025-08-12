@@ -75,6 +75,10 @@ export interface CommonHttpClientOptions {
      * Determine whether to retry on error.
      */
     shouldRetryOnError?: (error: Error, attemptNumber: number) => boolean | Promise<boolean>;
+    /**
+     * Process the error before throwing it. Can be used to add additional information to the error.
+     */
+    processError?: (error: Error) => Error;
 }
 
 /**
@@ -770,9 +774,23 @@ export class CommonHttpClient {
     }
 
     /**
-     * Perform a request.
+     * Request wrapper. It performs the request and handles errors.
      */
     public async request(request: CommonHttpClientRequest): Promise<CommonHttpClientFetchResponse> {
+        try {
+            return await this.performRequest(request);
+        } catch (e) {
+            if (this.options.processError) {
+                throw this.options.processError(e instanceof Error ? e : new Error(String(e)));
+            }
+            throw e;
+        }
+    }
+
+    /**
+     * Perform a request.
+     */
+    protected async performRequest(request: CommonHttpClientRequest): Promise<CommonHttpClientFetchResponse> {
         this.logDeprecationWarningIfNecessary(request);
         try {
             request = await this.preprocessRequest(request);

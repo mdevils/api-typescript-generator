@@ -21,6 +21,7 @@ Options for the common HTTP client.
 - [headers](openapi_client.CommonHttpClientOptions.md#headers)
 - [preprocessFetchResponse](openapi_client.CommonHttpClientOptions.md#preprocessfetchresponse)
 - [preprocessRequest](openapi_client.CommonHttpClientOptions.md#preprocessrequest)
+- [processError](openapi_client.CommonHttpClientOptions.md#processerror)
 - [shouldRetryOnError](openapi_client.CommonHttpClientOptions.md#shouldretryonerror)
 
 ### Methods
@@ -205,6 +206,28 @@ Preprocess the request before sending it.
 ##### Returns
 
 `Promise`\<[`CommonHttpClientRequest`](../modules/openapi_client.md#commonhttpclientrequest)\>
+
+___
+
+### processError
+
+• `Optional` **processError**: (`error`: `Error`) => `Error`
+
+#### Type declaration
+
+▸ (`error`): `Error`
+
+Process the error before throwing it. Can be used to add additional information to the error.
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `error` | `Error` |
+
+##### Returns
+
+`Error`
 
 ___
 
