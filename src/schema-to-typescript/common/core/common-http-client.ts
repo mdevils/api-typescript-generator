@@ -79,6 +79,10 @@ export interface CommonHttpClientOptions {
      * Process the error before throwing it. Can be used to add additional information to the error.
      */
     processError?: (error: Error) => Error;
+    /**
+     * Whether to follow redirects. Default is true.
+     */
+    followRedirects?: boolean;
 }
 
 /**
@@ -120,13 +124,13 @@ export interface CommonHttpClientFetchRequest {
      */
     credentials: 'include' | 'omit' | 'same-origin';
     /**
-     * Redirect mode.
-     */
-    redirect: 'error' | 'follow' | 'manual';
-    /**
      * Custom request properties. Can be used to pass metadata to the fetch function.
      */
     customRequestProps?: Record<string, unknown>;
+    /**
+     * Redirect mode.
+     */
+    redirect: 'error' | 'follow' | 'manual';
 }
 
 /**
@@ -198,7 +202,7 @@ export type CommonHttpClientRequest = Omit<
      * Request parameters serialization information.
      */
     parameters?: CommonHttpClientRequestParameters;
-} & Partial<Pick<CommonHttpClientFetchRequest, 'cache' | 'credentials' | 'redirect'>>;
+} & Partial<Pick<CommonHttpClientFetchRequest, 'cache' | 'credentials'>>;
 
 /**
  * Response of the fetch function.
@@ -780,6 +784,25 @@ export class CommonHttpClient {
         try {
             return await this.performRequest(request);
         } catch (e) {
+            const error = e as CommonHttpClientError;
+            if (error.response) {
+                if (
+                    error.response.status > 300 &&
+                    error.response.status < 400 &&
+                    error.response.headers['location'] &&
+                    this.options.followRedirects !== false
+                ) {
+                    const redirectUrl = new URL(error.response.headers['location'], error.url);
+                    return this.request({
+                        method: error.response.status === 307 || error.response.status === 308 ? request.method : 'GET',
+                        path: redirectUrl.pathname,
+                        query:
+                            redirectUrl.searchParams.size > 0
+                                ? Object.fromEntries(redirectUrl.searchParams.entries())
+                                : undefined
+                    });
+                }
+            }
             if (this.options.processError) {
                 throw this.options.processError(e instanceof Error ? e : new Error(String(e)));
             }
@@ -835,7 +858,6 @@ export class CommonHttpClient {
             headers: requestHeaders,
             cache,
             credentials,
-            redirect,
             ...otherRequestProps
         } = request;
         const headers = this.cleanupHeaders(requestHeaders);
@@ -844,7 +866,7 @@ export class CommonHttpClient {
             headers,
             cache: cache ?? 'default',
             credentials: credentials ?? 'same-origin',
-            redirect: redirect ?? 'follow',
+            redirect: 'error',
             body: this.getRequestBody(request)
         };
         let attemptNumber = 1;

@@ -68,7 +68,7 @@ ___
 
 ### CommonHttpClientRequest
 
-Ƭ **CommonHttpClientRequest**: `Omit`\<[`CommonHttpClientFetchRequest`](../interfaces/openapi_client.CommonHttpClientFetchRequest.md), ``"body"`` \| ``"headers"`` \| ``"cache"`` \| ``"credentials"`` \| ``"redirect"``\> & \{ `body?`: `unknown` ; `headers?`: [`CommonHttpClientRequestHeaders`](../interfaces/openapi_client.CommonHttpClientRequestHeaders.md) ; `parameters?`: [`CommonHttpClientRequestParameters`](openapi_client.md#commonhttpclientrequestparameters) ; `path`: `string` ; `pathParams?`: `Record`\<`string`, `unknown`\> ; `query?`: `Record`\<`string`, `unknown`\>  } & `Partial`\<`Pick`\<[`CommonHttpClientFetchRequest`](../interfaces/openapi_client.CommonHttpClientFetchRequest.md), ``"cache"`` \| ``"credentials"`` \| ``"redirect"``\>\>
+Ƭ **CommonHttpClientRequest**: `Omit`\<[`CommonHttpClientFetchRequest`](../interfaces/openapi_client.CommonHttpClientFetchRequest.md), ``"body"`` \| ``"headers"`` \| ``"cache"`` \| ``"credentials"`` \| ``"redirect"``\> & \{ `body?`: `unknown` ; `headers?`: [`CommonHttpClientRequestHeaders`](../interfaces/openapi_client.CommonHttpClientRequestHeaders.md) ; `parameters?`: [`CommonHttpClientRequestParameters`](openapi_client.md#commonhttpclientrequestparameters) ; `path`: `string` ; `pathParams?`: `Record`\<`string`, `unknown`\> ; `query?`: `Record`\<`string`, `unknown`\>  } & `Partial`\<`Pick`\<[`CommonHttpClientFetchRequest`](../interfaces/openapi_client.CommonHttpClientFetchRequest.md), ``"cache"`` \| ``"credentials"``\>\>
 
 Request in terms of OpenAPI.
 

@@ -16,6 +16,7 @@ Options for the common HTTP client.
 - [deprecatedOperations](openapi_client.CommonHttpClientOptions.md#deprecatedoperations)
 - [errorClass](openapi_client.CommonHttpClientOptions.md#errorclass)
 - [fetch](openapi_client.CommonHttpClientOptions.md#fetch)
+- [followRedirects](openapi_client.CommonHttpClientOptions.md#followredirects)
 - [formatHttpErrorMessage](openapi_client.CommonHttpClientOptions.md#formathttperrormessage)
 - [handleValidationError](openapi_client.CommonHttpClientOptions.md#handlevalidationerror)
 - [headers](openapi_client.CommonHttpClientOptions.md#headers)
@@ -108,6 +109,14 @@ Fetch function. Default is window.fetch-based implementation.
 ##### Returns
 
 `Promise`\<[`CommonHttpClientFetchResponse`](openapi_client.CommonHttpClientFetchResponse.md)\>
+
+___
+
+### followRedirects
+
+• `Optional` **followRedirects**: `boolean`
+
+Whether to follow redirects. Default is true.
 
 ___
 
