@@ -15,6 +15,7 @@ Options for the common HTTP client.
 - [binaryResponseType](openapi_client.CommonHttpClientOptions.md#binaryresponsetype)
 - [deprecatedOperations](openapi_client.CommonHttpClientOptions.md#deprecatedoperations)
 - [errorClass](openapi_client.CommonHttpClientOptions.md#errorclass)
+- [externalFetch](openapi_client.CommonHttpClientOptions.md#externalfetch)
 - [fetch](openapi_client.CommonHttpClientOptions.md#fetch)
 - [followRedirects](openapi_client.CommonHttpClientOptions.md#followredirects)
 - [formatHttpErrorMessage](openapi_client.CommonHttpClientOptions.md#formathttperrormessage)
@@ -89,6 +90,29 @@ Error class to be thrown when an error occurs.
 
 ___
 
+### externalFetch
+
+• `Optional` **externalFetch**: (`url`: `URL`, `request`: [`CommonHttpClientFetchRequest`](openapi_client.CommonHttpClientFetchRequest.md)) => `Promise`\<[`CommonHttpClientFetchResponse`](openapi_client.CommonHttpClientFetchResponse.md)\>
+
+#### Type declaration
+
+▸ (`url`, `request`): `Promise`\<[`CommonHttpClientFetchResponse`](openapi_client.CommonHttpClientFetchResponse.md)\>
+
+External fetch method. Will be used for external redirects.
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `url` | `URL` |
+| `request` | [`CommonHttpClientFetchRequest`](openapi_client.CommonHttpClientFetchRequest.md) |
+
+##### Returns
+
+`Promise`\<[`CommonHttpClientFetchResponse`](openapi_client.CommonHttpClientFetchResponse.md)\>
+
+___
+
 ### fetch
 
 • `Optional` **fetch**: (`url`: `URL`, `request`: [`CommonHttpClientFetchRequest`](openapi_client.CommonHttpClientFetchRequest.md)) => `Promise`\<[`CommonHttpClientFetchResponse`](openapi_client.CommonHttpClientFetchResponse.md)\>
@@ -114,9 +138,9 @@ ___
 
 ### followRedirects
 
-• `Optional` **followRedirects**: `boolean`
+• `Optional` **followRedirects**: `boolean` \| (`params`: \{ `request`: [`CommonHttpClientFetchRequest`](openapi_client.CommonHttpClientFetchRequest.md) ; `response`: [`CommonHttpClientFetchResponse`](openapi_client.CommonHttpClientFetchResponse.md) ; `url`: `URL`  }) => `Promise`\<\{ `error?`: `Error` ; `type`: ``"error"``  } \| \{ `response`: [`CommonHttpClientFetchResponse`](openapi_client.CommonHttpClientFetchResponse.md) ; `type`: ``"response"``  } \| \{ `request?`: [`CommonHttpClientFetchRequest`](openapi_client.CommonHttpClientFetchRequest.md) ; `type`: ``"redirect"``  } \| \{ `request?`: [`CommonHttpClientFetchRequest`](openapi_client.CommonHttpClientFetchRequest.md) ; `type`: ``"externalRedirect"``  }\>
 
-Whether to follow redirects. Default is true.
+Whether to follow redirects. Default is true. Can also be a function that decides what to do on a redirect.
 
 ___
 

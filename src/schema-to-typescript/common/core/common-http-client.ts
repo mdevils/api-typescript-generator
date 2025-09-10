@@ -80,9 +80,36 @@ export interface CommonHttpClientOptions {
      */
     processError?: (error: Error) => Error;
     /**
-     * Whether to follow redirects. Default is true.
+     * External fetch method. Will be used for external redirects.
      */
-    followRedirects?: boolean;
+    externalFetch?: (url: URL, request: CommonHttpClientFetchRequest) => Promise<CommonHttpClientFetchResponse>;
+    /**
+     * Whether to follow redirects. Default is true. Can also be a function that decides what to do on a redirect.
+     */
+    followRedirects?:
+        | boolean
+        | ((params: {
+              url: URL;
+              request: CommonHttpClientFetchRequest;
+              response: CommonHttpClientFetchResponse;
+          }) => Promise<
+              | {
+                    type: 'error';
+                    error?: Error;
+                }
+              | {
+                    type: 'response';
+                    response: CommonHttpClientFetchResponse;
+                }
+              | {
+                    type: 'redirect';
+                    request?: CommonHttpClientFetchRequest;
+                }
+              | {
+                    type: 'externalRedirect';
+                    request?: CommonHttpClientFetchRequest;
+                }
+          >);
 }
 
 /**
@@ -644,6 +671,59 @@ const formatParameter: Record<CommonHttpClientRequestParameterSerializeStyle, Pa
 const deprecationWarningShown: {[methodAndPath: string]: boolean} = {};
 
 /**
+ * Default implementation of the redirect handler.
+ */
+const defaultRedirectHandler: Exclude<CommonHttpClientOptions['followRedirects'], boolean | undefined> = async ({
+    url,
+    response
+}: {
+    url: URL;
+    response: CommonHttpClientFetchResponse;
+}) => {
+    const redirectUrl = new URL(response.headers['location'], url);
+    let responseUrl;
+    try {
+        responseUrl = new URL(response.url);
+    } catch (e) {
+        responseUrl = url;
+    }
+
+    if (responseUrl.host !== redirectUrl.host) {
+        return {type: 'externalRedirect'};
+    } else {
+        return {type: 'redirect'};
+    }
+};
+
+/**
+ * Default fetch implementation.
+ */
+async function defaultFetch(url: URL, request: CommonHttpClientFetchRequest): Promise<CommonHttpClientFetchResponse> {
+    const {...requestProps} = request;
+    const requestInit: RequestInit = requestProps;
+    const response = await fetch(url, requestInit);
+    const body: CommonHttpClientFetchResponseBody = isJsonMediaType(response.headers.get('content-type') ?? '')
+        ? {type: 'json', data: await response.json()}
+        : {type: 'blob', data: await response.blob()};
+    const headers: CommonHttpClientResponseHeaders = {};
+    response.headers.forEach((value, key) => {
+        headers[key] = value;
+    });
+    if (response.headers.has('set-cookie') && 'getSetCookie' in response.headers) {
+        headers['set-cookie'] = (response.headers as {getSetCookie(): string[]}).getSetCookie();
+    }
+    return {
+        status: response.status,
+        statusText: response.statusText,
+        body,
+        url: response.url,
+        headers,
+        ok: response.ok,
+        customRequestProps: request.customRequestProps
+    };
+}
+
+/**
  * Common HTTP client. Configurable for different environments.
  */
 export class CommonHttpClient {
@@ -749,32 +829,77 @@ export class CommonHttpClient {
         return url;
     }
 
-    /**
-     * Default fetch implementation.
-     */
-    protected async fetch(url: URL, request: CommonHttpClientFetchRequest): Promise<CommonHttpClientFetchResponse> {
-        const {...requestProps} = request;
-        const requestInit: RequestInit = requestProps;
-        const response = await fetch(url, requestInit);
-        const body: CommonHttpClientFetchResponseBody = isJsonMediaType(response.headers.get('content-type') ?? '')
-            ? {type: 'json', data: await response.json()}
-            : {type: 'blob', data: await response.blob()};
-        const headers: CommonHttpClientResponseHeaders = {};
-        response.headers.forEach((value, key) => {
-            headers[key] = value;
-        });
-        if (response.headers.has('set-cookie') && 'getSetCookie' in response.headers) {
-            headers['set-cookie'] = (response.headers as {getSetCookie(): string[]}).getSetCookie();
+    protected processErrorIfNecessary(error: unknown) {
+        if (this.options.processError) {
+            return this.options.processError(error instanceof Error ? error : new Error(String(error)));
         }
-        return {
-            status: response.status,
-            statusText: response.statusText,
-            body,
-            url: response.url,
-            headers,
-            ok: response.ok,
-            customRequestProps: request.customRequestProps
-        };
+        return error;
+    }
+
+    protected async handleRedirect(error: CommonHttpClientError) {
+        if (this.options.followRedirects === false) {
+            throw this.processErrorIfNecessary(error);
+        }
+
+        const {request, response, url} = error;
+
+        if (!request || !response) {
+            throw this.processErrorIfNecessary(error);
+        }
+
+        if (response.status <= 300 || response.status >= 400 || !response.headers['location']) {
+            throw this.processErrorIfNecessary(error);
+        }
+
+        const redirectHandler =
+            typeof this.options.followRedirects === 'function' ? this.options.followRedirects : defaultRedirectHandler;
+
+        const action = await redirectHandler({url, request, response});
+
+        if (!action || !('type' in action)) {
+            error.message = `Invalid redirect handler result for ${error.message}.`;
+            throw this.processErrorIfNecessary(error);
+        }
+
+        const redirectPreservingMethod = response.status === 307 || response.status === 308;
+        const newUrl = new URL(response.headers['location'], url);
+
+        if (action.type === 'error') {
+            error.message = `Redirect to ${newUrl.toString()} not allowed by redirect handler. ${error.message}`;
+            throw this.processErrorIfNecessary(action.error ?? error);
+        } else if (action.type === 'response') {
+            return action.response;
+        } else if (action.type === 'redirect') {
+            const fetchRequest =
+                action.request ??
+                (await this.generateFetchRequest({
+                    path: newUrl.pathname,
+                    method: redirectPreservingMethod ? request.method : 'GET'
+                }));
+            return this.performFetchRequest(newUrl, fetchRequest, this.options.fetch ?? defaultFetch).catch((error) =>
+                this.handleRequestError(error)
+            );
+        } else if (action.type === 'externalRedirect') {
+            const fetchRequest = action.request ?? {
+                // Change method to GET for 301, 302, 303 redirects
+                method: redirectPreservingMethod ? request.method : 'GET',
+                headers: {},
+                cache: request.cache,
+                credentials: request.credentials,
+                redirect: 'error'
+            };
+            return this.performFetchRequest(newUrl, fetchRequest, this.options.externalFetch ?? defaultFetch).catch(
+                (error) => this.handleRequestError(error)
+            );
+        } else {
+            error.message = `Invalid redirect handler result for ${error.message}.`;
+            throw this.processErrorIfNecessary(error);
+        }
+    }
+
+    protected handleRequestError(e: unknown): never | Promise<CommonHttpClientFetchResponse> {
+        const error = e as CommonHttpClientError;
+        return this.handleRedirect(error);
     }
 
     /**
@@ -784,37 +909,11 @@ export class CommonHttpClient {
         try {
             return await this.performRequest(request);
         } catch (e) {
-            const error = e as CommonHttpClientError;
-            if (error.response) {
-                if (
-                    error.response.status > 300 &&
-                    error.response.status < 400 &&
-                    error.response.headers['location'] &&
-                    this.options.followRedirects !== false
-                ) {
-                    const redirectUrl = new URL(error.response.headers['location'], error.url);
-                    return this.request({
-                        method: error.response.status === 307 || error.response.status === 308 ? request.method : 'GET',
-                        path: redirectUrl.pathname,
-                        query:
-                            redirectUrl.searchParams.size > 0
-                                ? Object.fromEntries(redirectUrl.searchParams.entries())
-                                : undefined
-                    });
-                }
-            }
-            if (this.options.processError) {
-                throw this.options.processError(e instanceof Error ? e : new Error(String(e)));
-            }
-            throw e;
+            return await this.handleRequestError(e);
         }
     }
 
-    /**
-     * Perform a request.
-     */
-    protected async performRequest(request: CommonHttpClientRequest): Promise<CommonHttpClientFetchResponse> {
-        this.logDeprecationWarningIfNecessary(request);
+    protected async generateFetchRequest(request: CommonHttpClientRequest): Promise<CommonHttpClientFetchRequest> {
         try {
             request = await this.preprocessRequest(request);
         } catch (e) {
@@ -838,18 +937,6 @@ export class CommonHttpClient {
                 `preprocessRequest error: ${getErrorMessage(e)}`
             );
         }
-        let url;
-        try {
-            url = this.buildUrl(request);
-        } catch (e) {
-            throw new this.options.errorClass(
-                new URL(request.path, this.options.baseUrl),
-                undefined,
-                undefined,
-                this.options,
-                `Error building request URL: ${getErrorMessage(e)}`
-            );
-        }
         const {
             body,
             path: _path,
@@ -861,7 +948,7 @@ export class CommonHttpClient {
             ...otherRequestProps
         } = request;
         const headers = this.cleanupHeaders(requestHeaders);
-        const fetchRequest: CommonHttpClientFetchRequest = {
+        return {
             ...otherRequestProps,
             headers,
             cache: cache ?? 'default',
@@ -869,16 +956,19 @@ export class CommonHttpClient {
             redirect: 'error',
             body: this.getRequestBody(request)
         };
+    }
+
+    protected async performFetchRequest(
+        url: URL,
+        fetchRequest: CommonHttpClientFetchRequest,
+        fetchMethod: (url: URL, request: CommonHttpClientFetchRequest) => Promise<CommonHttpClientFetchResponse>
+    ): Promise<CommonHttpClientFetchResponse> {
         let attemptNumber = 1;
         for (;;) {
             try {
                 let fetchResponse: CommonHttpClientFetchResponse;
                 try {
-                    if (this.options.fetch) {
-                        fetchResponse = await this.options.fetch(url, fetchRequest);
-                    } else {
-                        fetchResponse = await this.fetch(url, fetchRequest);
-                    }
+                    fetchResponse = await fetchMethod(url, fetchRequest);
                 } catch (e) {
                     throw new this.options.errorClass(url, fetchRequest, undefined, this.options, getErrorMessage(e));
                 }
@@ -903,7 +993,7 @@ export class CommonHttpClient {
                         this.options,
                         this.options.formatHttpErrorMessage
                             ? this.options.formatHttpErrorMessage(fetchResponse, fetchRequest)
-                            : `HTTP Error ${request.method} ${url.toString()} ${fetchResponse.status} (${fetchResponse.statusText})`
+                            : `HTTP Error ${fetchRequest.method} ${url.toString()} ${fetchResponse.status} (${fetchResponse.statusText})`
                     );
                 }
                 return fetchResponse;
@@ -914,6 +1004,27 @@ export class CommonHttpClient {
                 attemptNumber++;
             }
         }
+    }
+
+    /**
+     * Perform a request.
+     */
+    protected async performRequest(request: CommonHttpClientRequest): Promise<CommonHttpClientFetchResponse> {
+        this.logDeprecationWarningIfNecessary(request);
+        const fetchRequest = await this.generateFetchRequest(request);
+        let url;
+        try {
+            url = this.buildUrl(request);
+        } catch (e) {
+            throw new this.options.errorClass(
+                new URL(request.path, this.options.baseUrl),
+                undefined,
+                undefined,
+                this.options,
+                `Error building request URL: ${getErrorMessage(e)}`
+            );
+        }
+        return this.performFetchRequest(url, fetchRequest, this.options.fetch ?? defaultFetch);
     }
 
     /**
