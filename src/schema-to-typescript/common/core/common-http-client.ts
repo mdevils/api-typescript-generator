@@ -865,10 +865,12 @@ export class CommonHttpClient {
         } else if (action.type === 'redirect') {
             const fetchRequest =
                 action.request ??
-                (await this.generateFetchRequest({
-                    path: newUrl.pathname,
-                    method: redirectPreservingMethod ? request.method : 'GET'
-                }));
+                (
+                    await this.generateFetchRequest({
+                        path: newUrl.pathname,
+                        method: redirectPreservingMethod ? request.method : 'GET'
+                    })
+                )[0];
             return this.performFetchRequest(newUrl, fetchRequest, this.options.fetch ?? defaultFetch);
         } else if (action.type === 'externalRedirect') {
             const fetchRequest = action.request ?? {
@@ -900,7 +902,9 @@ export class CommonHttpClient {
         }
     }
 
-    protected async generateFetchRequest(request: CommonHttpClientRequest): Promise<CommonHttpClientFetchRequest> {
+    protected async generateFetchRequest(
+        request: CommonHttpClientRequest
+    ): Promise<[CommonHttpClientFetchRequest, CommonHttpClientRequest]> {
         try {
             request = await this.preprocessRequest(request);
         } catch (e) {
@@ -935,14 +939,17 @@ export class CommonHttpClient {
             ...otherRequestProps
         } = request;
         const headers = this.cleanupHeaders(requestHeaders);
-        return {
-            ...otherRequestProps,
-            headers,
-            cache: cache ?? 'default',
-            credentials: credentials ?? 'same-origin',
-            redirect: 'error',
-            body: this.getRequestBody(request)
-        };
+        return [
+            {
+                ...otherRequestProps,
+                headers,
+                cache: cache ?? 'default',
+                credentials: credentials ?? 'same-origin',
+                redirect: 'error',
+                body: this.getRequestBody(request)
+            },
+            request
+        ];
     }
 
     protected async performFetchRequest(
@@ -1000,10 +1007,10 @@ export class CommonHttpClient {
      */
     protected async performRequest(request: CommonHttpClientRequest): Promise<CommonHttpClientFetchResponse> {
         this.logDeprecationWarningIfNecessary(request);
-        const fetchRequest = await this.generateFetchRequest(request);
+        const [fetchRequest, preprocessedRequest] = await this.generateFetchRequest(request);
         let url;
         try {
-            url = this.buildUrl(request);
+            url = this.buildUrl(preprocessedRequest);
         } catch (e) {
             throw new this.options.errorClass(
                 new URL(request.path, this.options.baseUrl),
