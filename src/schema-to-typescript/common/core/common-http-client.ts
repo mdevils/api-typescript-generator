@@ -698,7 +698,10 @@ const defaultRedirectHandler: Exclude<CommonHttpClientOptions['followRedirects']
 /**
  * Default fetch implementation.
  */
-async function defaultFetch(url: URL, request: CommonHttpClientFetchRequest): Promise<CommonHttpClientFetchResponse> {
+export async function defaultFetch(
+    url: URL,
+    request: CommonHttpClientFetchRequest
+): Promise<CommonHttpClientFetchResponse> {
     const {...requestProps} = request;
     const requestInit: RequestInit = requestProps;
     const response = await fetch(url, requestInit);
