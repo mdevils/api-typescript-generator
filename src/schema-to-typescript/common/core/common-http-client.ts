@@ -983,7 +983,7 @@ export class CommonHttpClient {
                     }
                 }
                 if (!fetchResponse.ok) {
-                    return this.handleRedirect(
+                    return await this.handleRedirect(
                         new this.options.errorClass(
                             url,
                             fetchRequest,
